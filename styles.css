@@ -13,11 +13,7 @@ body {
 
 html,
 body {
-    overflow: hidden;
-    /* Allow scrolling on mobile */
-    @media (max-width: 768px) {
-        overflow: auto;
-    }
+    overflow: auto;
 }
 
 #countdown {
