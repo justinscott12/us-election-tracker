@@ -1,4 +1,4 @@
-var demEV = 54;
+var demEV = 0;
 var repEV = 0;
 var EVToPercentage = 100 / 538;
 
