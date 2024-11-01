@@ -1,0 +1,177 @@
+:root {
+    --rep: #ff0000;
+    --dem: #0099ff;
+    --repLead: #ff5b508c;
+    --demLead: #78f8ff;
+    --split: #D820E6;
+    --undecided: #C0C0C0;
+}
+
+body {
+    text-align: center;
+}
+
+html,
+body {
+    overflow: hidden;
+}
+
+#countdown {
+    text-align: center;
+    font-size: 50px;
+    margin-top: 50px;
+}
+
+#scoreboard {
+    display: flex;
+    justify-content: space-between;
+    margin-top: -50px;
+}
+
+#scoreboard svg {
+    display: inline-block;
+}
+
+#scoreboard p {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-size: larger;
+    padding: 0.5%;
+}
+
+#demPortrait,
+#repPortrait {
+    position: relative;
+    flex: 1;
+    margin: 0.5%;
+    scale: 130%;
+    top: 17px;
+}
+
+#demPortrait {
+    right: 50px;
+}
+
+#repPortrait {
+    left: 50px;
+}
+
+.democrat {
+    position: relative;
+    color: var(--dem);
+    right: 12%;
+    margin-top: 6%;
+}
+
+.republican {
+    position: relative;
+    color: var(--rep);
+    left: 12%;
+    margin-top: 6%;
+}
+
+#progressBar {
+    position: absolute;
+    left: 22.5%;
+    background-color: var(--undecided);
+}
+
+#demProgressBar {
+    height: 100%;
+    fill: var(--dem);
+}
+
+#repProgressBar {
+    position: absolute;
+    top: 0;
+    left: 1%;
+    /* Adjust this value to position the rectangle */
+    height: 100%;
+    fill: var(--rep);
+}
+
+#map {
+    position: relative;
+    margin: 2%;
+    scale: 90%;
+    /* comment out bottom when countdown is done */
+    bottom: 120px;
+}
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.popup {
+    font-family: Arial, sans-serif;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.popup .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.popup #emailInput {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.popup button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.bar {
+    width: 300px;
+    border: 1px solid;
+    border-radius: 5px;
+    position: relative;
+}
+
+.percent {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translate(0, -50%);
+}
+
+.text {
+    padding: 3px;
+    width: 80%;
+}
+
+.one {
+    width: 25%;
+}
+
+.two {
+    width: 55%;
+}
