@@ -34,10 +34,11 @@ function closePopupFunc() {
 }
 
 closePopup.addEventListener('click', closePopupFunc);
-popupOverlay.addEventListener('click', function (event) {
-    if (event.target === popupOverlay) {
-        closePopupFunc();
-    }
+
+popupOverlay.addEventListener('click', function handleOverlayClick(event) {
+  if (event.target === popupOverlay) {
+    closePopupFunc();
+  }
 });
 
 function displayStateResults(state, dem, rep, votes, status) {
