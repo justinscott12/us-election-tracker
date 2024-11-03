@@ -72,24 +72,24 @@ function displayStateResults(state, dem, rep, votes, status) {
 
 var countDownDate = new Date("Nov 5, 2024 18:00:00").getTime();
 
-var x = setInterval(function () {
+function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = countDownDate - now;
 
-    var now = new Date().getTime();
-
-    var distance = countDownDate - now;
-
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     document.getElementById("countdown").innerHTML = "First Polls Close: " + days + "d " + hours + "h " +
         minutes + "m " + seconds + "s ";
-    
-    // document.getElementById("countdown").innerHTML = "Breaking: (news)";
 
     if (distance < 0) {
-        clearInterval(x);
+        clearInterval(intervalId);
         document.getElementById("countdown").innerHTML = "POLLS ARE CLOSING NOW";
     }
-}, 1000);
+}
+
+updateCountdown();
+
+const intervalId = setInterval(updateCountdown, 1000);
