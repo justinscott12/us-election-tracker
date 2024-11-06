@@ -1,5 +1,5 @@
-var demEV = 0;
-var repEV = 0;
+var demEV = 3;
+var repEV = 23;
 var EVToPercentage = 100 / 538;
 
 var popupOverlay = document.getElementById('popupOverlay');
@@ -21,7 +21,7 @@ document.getElementById("demProgressBar").style.width = (demEV * EVToPercentage)
 document.getElementById("repProgressBar").style.width = (repEV * EVToPercentage) + "%";
 
 // adjust as rep gets more EV
-var repProgressBarTranslate = 99.2;
+var repProgressBarTranslate = 96;
 document.getElementById("repProgressBar").style.transform = "translateX(" + repProgressBarTranslate + "%)";
 
 
@@ -71,7 +71,7 @@ function displayStateResults(state, dem, rep, votes, status) {
     openPopup();
 }
 
-var countDownDate = new Date("Nov 5, 2024 19:00:00").getTime();
+var countDownDate = new Date("Nov 5, 2024 20:00:00").getTime();
 
 function updateCountdown() {
     const now = new Date().getTime();
