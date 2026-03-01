@@ -2,11 +2,39 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { SITE_URL, SITE_NAME, DEFAULT_DESCRIPTION, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "US Election Tracker",
-  description: "Informational US election results and notable races.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} – Live Election Results & Tracker`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  keywords: KEYWORDS,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} – Live Election Results & Tracker`,
+    description: DEFAULT_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} – Live Election Results & Tracker`,
+    description: DEFAULT_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  alternates: { canonical: SITE_URL },
   icons: { icon: "/favicon.svg" },
+  category: "news",
 };
 
 const THEME_SCRIPT = `
@@ -18,6 +46,33 @@ const THEME_SCRIPT = `
 })();
 `;
 
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      description: DEFAULT_DESCRIPTION,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      inLanguage: "en-US",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", url: `${SITE_URL}/notable-races` },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: "Live US election results tracker: presidential, Senate, House, and governor races.",
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,6 +81,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+        />
         <GoogleAnalytics />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <AppHeader />

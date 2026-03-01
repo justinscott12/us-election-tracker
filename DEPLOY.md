@@ -9,6 +9,7 @@ Set these in your host’s dashboard (Netlify: Site settings → Environment var
 | `ELECTION_UPDATE_SECRET` | Yes (for PATCH) | Secret string only you know. Send as `Authorization: Bearer <secret>` or `X-Election-Secret: <secret>` when calling PATCH `/api/election`. If unset in production, PATCH returns 503. |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | No | Google Analytics 4 measurement ID (e.g. `G-XXXXXXXXXX`). When set, gtag is loaded on every page. |
 | `LIVE_RESULTS_ENABLED` | No | Set to `true` or `false` to show/hide Live Results tab and set default tab without code change. Overrides `src/lib/feature-flags.ts` default. |
+| `NEXT_PUBLIC_SITE_URL` | No | Canonical site URL for SEO (sitemap, Open Graph, JSON-LD). Defaults to `https://us-election-tracker.com` if unset. Set to your production URL. |
 | `NODE_ENV` | No | Set to `production` automatically by Netlify/Vercel. |
 
 **Generate a strong secret (example):**

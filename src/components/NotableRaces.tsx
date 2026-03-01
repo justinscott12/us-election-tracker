@@ -130,9 +130,9 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
             </div>
           </section>
         )}
-        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 text-center">
+        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200 text-center">
           {title}
-        </h2>
+        </h1>
 
         {!races.length ? (
           <p className="text-slate-500 dark:text-slate-400 text-center">
