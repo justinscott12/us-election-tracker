@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "US Election Tracker",
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased flex flex-col">
+        <GoogleAnalytics />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <AppHeader />
         <main className="flex-1 flex flex-col bg-white dark:bg-slate-900">
