@@ -20,15 +20,17 @@ const STATUS_STYLES: Record<RaceStatus, string> = {
   final: "bg-green-200 text-green-900 dark:bg-green-900/50 dark:text-green-200",
 };
 
-/** Format ISO date (YYYY-MM-DD) as "March 3rd" */
+/** Format ISO date (YYYY-MM-DD) as "March 3rd" or "March 3rd, 2026" when year differs from current */
 function formatRaceDate(isoDate: string): string {
   const d = new Date(isoDate + "T12:00:00");
   if (Number.isNaN(d.getTime())) return isoDate;
   const month = d.toLocaleString("en-US", { month: "long" });
   const day = d.getDate();
+  const year = d.getFullYear();
   const suffix =
     day % 10 === 1 && day !== 11 ? "st" : day % 10 === 2 && day !== 12 ? "nd" : day % 10 === 3 && day !== 13 ? "rd" : "th";
-  return `${month} ${day}${suffix}`;
+  const yearNow = new Date().getFullYear();
+  return year !== yearNow ? `${month} ${day}${suffix}, ${year}` : `${month} ${day}${suffix}`;
 }
 
 interface NotableRacesProps {
@@ -153,7 +155,6 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
               >
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className="font-medium text-slate-900 dark:text-slate-100">{race.title}</span>
-                  <span className="text-sm text-slate-500 dark:text-slate-400">{formatRaceDate(race.date)}</span>
                   {race.status && (
                     <span className={`text-xs font-medium rounded px-2 py-0.5 shrink-0 inline-flex items-center gap-1 ${STATUS_STYLES[race.status]}`}>
                       {(race.status === "called" || race.status === "final") && (
@@ -163,7 +164,10 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                     </span>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
+                    {formatRaceDate(race.date)}
+                  </span>
                   {race.state && (
                     <span className="text-xs rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-slate-600 dark:text-slate-300">
                       {race.state}
@@ -265,6 +269,9 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                 className={stateRaces.length > 1 ? "min-w-0 border border-slate-200 dark:border-slate-600 rounded-lg p-2.5" : ""}
               >
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 font-medium">{race.title}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5 tabular-nums">
+                  {formatRaceDate(race.date)}
+                </p>
                 {race.status && (
                   <p className="mb-1.5">
                     <span className={`text-xs font-medium rounded px-2 py-1 inline-flex items-center gap-1.5 ${STATUS_STYLES[race.status]}`}>
