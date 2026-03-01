@@ -1,9 +1,10 @@
 import type { ElectionData } from "@/types/election";
 import { STATE_FILLS_2024, STATE_RESULTS_2024 } from "@/data/2024-results";
+import { LIVE_RESULTS_ENABLED } from "@/lib/feature-flags";
 
 export const SEED_DATA: ElectionData = {
   defaultTab: "notable-races",
-  showLiveResults: false,
+  showLiveResults: LIVE_RESULTS_ENABLED,
   stateOfNation: {
     presidential: {
       demName: "Kamala Harris",

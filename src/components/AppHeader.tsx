@@ -46,9 +46,25 @@ function MoonIcon() {
 export function AppHeader() {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
+  const [defaultHomeHref, setDefaultHomeHref] = useState<string>("/notable-races");
+  const [showLiveResults, setShowLiveResults] = useState(false);
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/election", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { showLiveResults?: boolean } | null) => {
+        const enabled = !!data?.showLiveResults;
+        setShowLiveResults(enabled);
+        setDefaultHomeHref(enabled ? "/live-results" : "/notable-races");
+      })
+      .catch(() => {
+        setShowLiveResults(false);
+        setDefaultHomeHref("/notable-races");
+      });
   }, []);
 
   const toggleTheme = () => {
@@ -63,9 +79,21 @@ export function AppHeader() {
   const activeClass = "text-slate-900 dark:text-white";
 
   return (
-    <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 px-4 py-3 shrink-0">
-      <div className="max-w-4xl mx-auto grid grid-cols-[minmax(0,25rem)_auto_minmax(0,1fr)] items-center gap-6">
-        <nav className="flex items-center gap-3 sm:gap-4 text-sm font-medium min-w-0">
+    <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 pl-0 pr-4 py-3 shrink-0 sm:pl-2">
+      <div className="relative max-w-4xl mx-auto flex items-center justify-between gap-4">
+        <nav className="flex items-center gap-2 sm:gap-3 text-sm font-medium min-w-0 shrink-0 max-w-[38%] justify-start">
+          {showLiveResults && (
+            <Link
+              href="/live-results"
+              className={`shrink-0 flex items-center gap-1.5 ${pathname === "/live-results" ? activeClass : linkClass}`}
+            >
+              <span
+                className="live-dot size-2 shrink-0 rounded-full bg-red-500"
+                aria-hidden
+              />
+              Live Results
+            </Link>
+          )}
           <Link
             href="/notable-races"
             className={`shrink-0 ${pathname === "/notable-races" ? activeClass : linkClass}`}
@@ -80,8 +108,8 @@ export function AppHeader() {
           </Link>
         </nav>
         <Link
-          href="/"
-          className={`flex items-center gap-2 text-xl font-bold hover:opacity-90 justify-self-center ${pathname === "/" ? activeClass : "text-slate-900 dark:text-white"}`}
+          href={defaultHomeHref}
+          className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 text-xl font-bold hover:opacity-90 py-2 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
         >
           <LogoIcon />
           US Election Tracker
@@ -89,7 +117,7 @@ export function AppHeader() {
         <button
           type="button"
           onClick={toggleTheme}
-          className="ml-auto p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors justify-self-end"
+          className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
           aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
           {isDark ? <SunIcon /> : <MoonIcon />}

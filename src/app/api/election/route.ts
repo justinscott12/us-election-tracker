@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getData, applyResultUpdate } from "@/lib/data";
+import { LIVE_RESULTS_ENABLED } from "@/lib/feature-flags";
 import type { ElectionResultUpdate, NotableRaceUpdate, PresidentialStateUpdate } from "@/types/election";
 
 export const dynamic = "force-dynamic";
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const data = await getData();
+    data.showLiveResults = LIVE_RESULTS_ENABLED;
     return NextResponse.json(data);
   } catch (e) {
     console.error(e);

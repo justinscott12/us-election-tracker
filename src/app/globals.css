@@ -41,3 +41,7 @@ body {
     box-shadow: 0 0 4px 1px rgba(239, 68, 68, 0.5);
   }
 }
+
+.live-dot {
+  animation: live-dot-glow 1.5s ease-in-out infinite;
+}

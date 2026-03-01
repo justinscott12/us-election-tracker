@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 /**
- * Front page: redirect to Live Results when enabled, otherwise Notable Races.
+ * Front page: when showLiveResults is enabled, redirect to Live Results (default tab).
+ * Otherwise redirect to Notable Races.
  */
 export default function Home() {
   const router = useRouter();
