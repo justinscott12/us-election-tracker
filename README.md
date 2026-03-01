@@ -18,6 +18,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - **GET `/api/election`** — Returns full election data (default tab, state of nation, notable races).
 - **PATCH `/api/election`** — Update any part of the data. Body is merged with existing data.
 
+**Production:** In production, PATCH requires authentication so only you can update data. Set the env var `ELECTION_UPDATE_SECRET` in your deployment (e.g. Vercel or Netlify). Send it on each PATCH request as either `Authorization: Bearer YOUR_SECRET` or `X-Election-Secret: YOUR_SECRET`. If the secret is missing or wrong, PATCH returns 401. GET remains public.
+
 ### Change default tab
 
 Set which tab opens first (e.g. `notable-races` during primaries, `state-of-nation` on election night):

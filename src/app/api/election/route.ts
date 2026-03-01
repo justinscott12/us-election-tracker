@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getData, applyResultUpdate } from "@/lib/data";
-import type { ElectionResultUpdate } from "@/types/election";
+import type { ElectionResultUpdate, NotableRaceUpdate, PresidentialStateUpdate } from "@/types/election";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +19,26 @@ export async function GET() {
 
 /** PATCH body must be exactly one of: { notableRace: { id, ... } } or { presidentialState: { stateCode, ... } }. One election per request; only result fields are updated. */
 export async function PATCH(request: Request) {
+  const secret = process.env.ELECTION_UPDATE_SECRET;
+  const isProduction = process.env.NODE_ENV === "production";
+  if (isProduction && !secret) {
+    console.error("ELECTION_UPDATE_SECRET is not set; PATCH is disabled in production.");
+    return NextResponse.json(
+      { error: "Updates are disabled" },
+      { status: 503 }
+    );
+  }
+  if (secret) {
+    const authHeader = request.headers.get("authorization");
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : request.headers.get("x-election-secret");
+    if (token !== secret) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+  }
+
   try {
     const body = (await request.json()) as Record<string, unknown>;
     const hasNotable = "notableRace" in body && body.notableRace != null && typeof body.notableRace === "object";
@@ -29,19 +49,26 @@ export async function PATCH(request: Request) {
         { status: 400 }
       );
     }
-    const update = body as ElectionResultUpdate;
-    if (hasNotable && typeof (update.notableRace as { id?: unknown }).id !== "string") {
-      return NextResponse.json(
-        { error: "notableRace.id is required and must be a string" },
-        { status: 400 }
-      );
+    if (hasNotable) {
+      const nr = body.notableRace as { id?: unknown };
+      if (typeof nr.id !== "string") {
+        return NextResponse.json(
+          { error: "notableRace.id is required and must be a string" },
+          { status: 400 }
+        );
+      }
+    } else {
+      const ps = body.presidentialState as { stateCode?: unknown };
+      if (typeof ps.stateCode !== "string") {
+        return NextResponse.json(
+          { error: "presidentialState.stateCode is required and must be a string" },
+          { status: 400 }
+        );
+      }
     }
-    if (hasPresidential && typeof (update.presidentialState as { stateCode?: unknown }).stateCode !== "string") {
-      return NextResponse.json(
-        { error: "presidentialState.stateCode is required and must be a string" },
-        { status: 400 }
-      );
-    }
+    const update: ElectionResultUpdate = hasNotable
+      ? { notableRace: body.notableRace as NotableRaceUpdate }
+      : { presidentialState: body.presidentialState as PresidentialStateUpdate };
     const data = await applyResultUpdate(update);
     return NextResponse.json(data);
   } catch (e) {
