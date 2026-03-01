@@ -38,10 +38,10 @@ Add `ELECTION_UPDATE_SECRET` under Project → Settings → Environment Variable
 
 ## 4. Data persistence (file-backed updates)
 
-The app reads/writes `data/election.json` on the server. On **serverless** (Netlify, Vercel):
+The app reads/writes election data on the server. **Local:** `data/election.json` under the project directory. **Serverless** (Netlify, Vercel): the app writes to the platform’s temp directory (`/tmp`) so PATCH succeeds; that storage is **ephemeral**, so updates may not persist across invocations or after a deploy.
 
 - **GET** always works: it falls back to seed data if the file is missing.
-- **PATCH** writes to the function’s filesystem; that storage is **ephemeral**, so updates may not persist across invocations or after a deploy.
+- **PATCH** no longer fails with ENOENT; writes go to a writable temp dir on serverless.
 
 To have persistent updates in production you’d need to switch to a database or Netlify Blobs / Vercel KV (and change `src/lib/data.ts`). For a read-only prod site using seed data, no change is needed.
 

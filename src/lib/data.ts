@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
+import os from "os";
 import type {
   ElectionData,
   ElectionResultUpdate,
@@ -9,7 +10,11 @@ import type {
 } from "@/types/election";
 import { SEED_DATA } from "./seed-data";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const isServerless =
+  !!process.env.NETLIFY || !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+const DATA_DIR = isServerless
+  ? path.join(os.tmpdir(), "election-tracker-data")
+  : path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "election.json");
 
 export async function getData(): Promise<ElectionData> {
