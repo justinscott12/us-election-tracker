@@ -5,8 +5,8 @@
  * Optional override: set env LIVE_RESULTS_ENABLED=true or false (e.g. in Netlify)
  * to toggle without changing code.
  */
-// Keep false for both local and prod until election day.
-const LIVE_RESULTS_ENABLED_DEFAULT = false;
+// Set to true for the Texas U.S. Senate primaries (live results enabled).
+const LIVE_RESULTS_ENABLED_DEFAULT = true;
 
 const fromEnv = process.env.LIVE_RESULTS_ENABLED;
 const fromEnvBool =

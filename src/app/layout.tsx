@@ -91,6 +91,9 @@ export default function RootLayout({
         <main className="flex-1 flex flex-col bg-white dark:bg-slate-900">
           {children}
         </main>
+        <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/80 text-xs text-slate-500 dark:text-slate-400 py-3 text-center">
+          © 2026 Sunshine Tech Solutions LLC. All rights reserved.
+        </footer>
       </body>
     </html>
   );
