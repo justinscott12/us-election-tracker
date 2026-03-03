@@ -1,6 +1,5 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
-import os from "os";
 import { getStore } from "@netlify/blobs";
 import type {
   ElectionData,
@@ -20,7 +19,6 @@ const BLOB_STORE_NAME = process.env.ELECTION_BLOB_STORE || "election-tracker";
 const BLOB_KEY = process.env.ELECTION_BLOB_KEY || "election.json";
 
 async function readFromBlob(): Promise<ElectionData | null> {
-  if (!isNetlify) return null;
   try {
     const store = getStore(BLOB_STORE_NAME);
     const value = await store.get(BLOB_KEY, { type: "json" });
@@ -31,22 +29,20 @@ async function readFromBlob(): Promise<ElectionData | null> {
   }
 }
 
+/** Persist to Blob store. No-op if not on Netlify or blob unavailable (e.g. local). */
 async function writeToBlob(data: ElectionData): Promise<void> {
-  if (!isNetlify) return;
-  const store = getStore(BLOB_STORE_NAME);
-  await store.set(BLOB_KEY, JSON.stringify(data));
+  try {
+    const store = getStore(BLOB_STORE_NAME);
+    await store.set(BLOB_KEY, JSON.stringify(data));
+  } catch {
+    // Blob not available (e.g. local dev without Netlify context)
+  }
 }
 
 export async function getData(): Promise<ElectionData> {
-  // In Netlify production, prefer durable blob store
-  if (isNetlify) {
-    const blobData = await readFromBlob();
-    if (blobData) {
-      return blobData;
-    }
-  }
+  const blobData = await readFromBlob();
+  if (blobData) return blobData;
 
-  // Fallback to local JSON file (development or when blob missing)
   try {
     const raw = await readFile(DATA_FILE, "utf-8");
     return JSON.parse(raw) as ElectionData;
@@ -116,11 +112,16 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
       ...current,
       notableRaces: current.notableRaces.map((r, i) => (i === raceIndex ? nextRace : r)),
     };
-    if (!isNetlify) {
-      await mkdir(DATA_DIR, { recursive: true });
-      await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    if (isNetlify) {
+      await writeToBlob(next);
+    } else {
+      try {
+        await mkdir(DATA_DIR, { recursive: true });
+        await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+      } catch {
+        await writeToBlob(next);
+      }
     }
-    await writeToBlob(next);
     return next;
   }
 
@@ -145,11 +146,16 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
         },
       },
     };
-    if (!isNetlify) {
-      await mkdir(DATA_DIR, { recursive: true });
-      await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    if (isNetlify) {
+      await writeToBlob(next);
+    } else {
+      try {
+        await mkdir(DATA_DIR, { recursive: true });
+        await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+      } catch {
+        await writeToBlob(next);
+      }
     }
-    await writeToBlob(next);
     return next;
   }
 
