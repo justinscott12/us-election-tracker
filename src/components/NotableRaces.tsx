@@ -232,7 +232,7 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
       {/* State popup: same style as State of the Nation (bottom-right corner card) */}
       {selectedStateCode != null && stateRaces.length > 0 && (
         <div
-          className={`fixed bottom-4 right-4 z-50 max-h-[70vh] overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-xl p-3 ${
+          className={`fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 sm:left-auto sm:right-4 sm:top-auto sm:bottom-4 sm:translate-x-0 sm:translate-y-0 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-xl p-2 sm:p-3 max-h-[85vh] sm:max-h-[70vh] ${
             stateRaces.length > 2 ? "max-w-2xl w-[95vw]" : stateRaces.length > 1 ? "max-w-xl w-[90vw]" : "w-72"
           }`}
           role="dialog"
@@ -262,9 +262,9 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
           <div
             className={
               stateRaces.length > 2
-                ? "mt-2 gap-3 grid grid-cols-2 md:grid-cols-3"
+                ? "mt-1.5 sm:mt-2 gap-2 sm:gap-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
                 : stateRaces.length > 1
-                  ? "mt-2 gap-3 grid grid-cols-2"
+                  ? "mt-1.5 sm:mt-2 gap-2 sm:gap-3 grid grid-cols-1 sm:grid-cols-2"
                   : "mt-2"
             }
           >
@@ -276,14 +276,14 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
               return (
               <div
                 key={race.id}
-                className={stateRaces.length > 1 ? "min-w-0 border border-slate-200 dark:border-slate-600 rounded-lg p-2 flex flex-col" : ""}
+                className={stateRaces.length > 1 ? "min-w-0 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 sm:p-2 flex flex-col" : ""}
               >
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 font-medium">{race.title}</p>
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5 tabular-nums">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 sm:mb-1.5 font-medium">{race.title}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 sm:mb-1.5 tabular-nums">
                   {formatRaceDate(race.date)}
                 </p>
                 {race.status && (
-                  <p className="mb-1.5">
+                  <p className="mb-1 sm:mb-1.5">
                     <span className={`text-xs font-medium rounded px-2 py-1 inline-flex items-center gap-1.5 ${STATUS_STYLES[race.status]}`}>
                       {(race.status === "called" || race.status === "final") && (
                         <span className="text-green-600 dark:text-green-400" aria-hidden>✓</span>
@@ -293,51 +293,51 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   </p>
                 )}
                 {(race.status === "called" || race.status === "final") && race.results?.some((r) => r.winner) && (
-                  <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-1.5">
+                  <p className="text-sm font-medium text-green-700 dark:text-green-400 mb-1 sm:mb-1.5">
                     Winner: {race.results.find((r) => r.winner)!.name}
                   </p>
                 )}
                 {(showUnifiedTable || race.votesCountedPct != null) && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 sm:mb-1.5">
                     {race.votesCountedPct != null ? `${race.votesCountedPct}% est. votes in` : "0% est. votes in"}
                   </p>
                 )}
                 {race.results && race.results.length > 0 ? (
-                  <div className="overflow-x-auto -mx-1 mb-2">
+                  <div className="overflow-x-auto -mx-1 mb-1.5 sm:mb-2">
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-600">
-                          <th className="text-left py-1 pr-2 font-medium">Candidate</th>
+                          <th className="text-left py-0.5 sm:py-1 pr-2 font-medium">Candidate</th>
                           {showParty && (
-                            <th className="text-right py-1 pl-2 pr-2 font-medium">Party</th>
+                            <th className="text-right py-0.5 sm:py-1 pl-2 pr-2 font-medium">Party</th>
                           )}
                           {showVotes && (
-                            <th className="text-right py-1 pl-2 font-medium">Votes</th>
+                            <th className="text-right py-0.5 sm:py-1 pl-2 font-medium">Votes</th>
                           )}
                           {showPct && (
-                            <th className="text-right py-1 pl-2 font-medium">Pct.</th>
+                            <th className="text-right py-0.5 sm:py-1 pl-2 font-medium">Pct.</th>
                           )}
                         </tr>
                       </thead>
                       <tbody>
                         {race.results.map((r) => (
                           <tr key={r.name} className="border-b border-slate-100 dark:border-slate-700/50">
-                            <td className="py-1.5 pr-2">
+                            <td className="py-1 sm:py-1.5 pr-2">
                               <span className="text-slate-700 dark:text-slate-300">{r.name}</span>
                               {(race.status === "called" || race.status === "final") && r.winner && (
                                 <span className="text-green-600 dark:text-green-400 ml-1" aria-hidden>✓</span>
                               )}
                             </td>
                             {showParty && (
-                              <td className="py-1.5 pl-2 pr-2 text-right text-slate-600 dark:text-slate-400">{r.party ?? "—"}</td>
+                              <td className="py-1 sm:py-1.5 pl-2 pr-2 text-right text-slate-600 dark:text-slate-400">{r.party ?? "—"}</td>
                             )}
                             {showVotes && (
-                              <td className="py-1.5 pl-2 text-right text-slate-700 dark:text-slate-300 tabular-nums">
+                              <td className="py-1 sm:py-1.5 pl-2 text-right text-slate-700 dark:text-slate-300 tabular-nums">
                                 {r.votes != null ? r.votes.toLocaleString() : (showUnifiedTable ? "0" : "—")}
                               </td>
                             )}
                             {showPct && (
-                              <td className="py-1.5 pl-2 text-right text-slate-900 dark:text-slate-100 tabular-nums">
+                              <td className="py-1 sm:py-1.5 pl-2 text-right text-slate-900 dark:text-slate-100 tabular-nums">
                                 {r.pct != null ? `${r.pct}%` : (showUnifiedTable ? "0%" : "—")}
                               </td>
                             )}
@@ -350,7 +350,7 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   <p className="text-xs text-slate-500 dark:text-slate-400 py-1">No results yet.</p>
                 )}
                 {(race.description || race.significance) && (
-                  <div className={`mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-600 ${stateRaces.length > 1 ? "mt-auto" : ""}`}>
+                  <div className={`mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-600 ${stateRaces.length > 1 ? "sm:mt-auto" : ""}`}>
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">Why it matters</p>
                     <div className="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5">
                       {race.description && (
@@ -383,7 +383,7 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
           <button
             type="button"
             onClick={() => { setSelectedStateCode(null); setSelectedRace(null); setExpandedWhyItMatters(new Set()); }}
-            className="mt-3 w-full py-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600"
+            className="mt-2 sm:mt-3 w-full py-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600"
           >
             Close
           </button>

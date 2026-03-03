@@ -12,7 +12,7 @@ function LogoIcon({ className }: { className?: string }) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1000 600"
-      className={`shrink-0 w-6 h-6 sm:w-8 sm:h-8 text-slate-900 dark:text-white ${className ?? ""}`}
+      className={`shrink-0 w-6 h-6 md:w-8 md:h-8 text-slate-900 dark:text-white ${className ?? ""}`}
       aria-hidden
     >
       <g fill="currentColor" stroke="none">
@@ -77,53 +77,53 @@ export function AppHeader() {
   const activeClass = "text-slate-900 dark:text-white";
 
   return (
-    <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 px-3 py-3 shrink-0 sm:px-4">
-      <div className="w-full flex flex-col gap-1 sm:gap-0 sm:block sm:relative">
-        {/* Row 1: middle tab aligned with page center; logo in right corner */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Left spacer (sm+: equal to right so center is true middle); mobile: Live Results */}
-          <div className="flex items-center min-w-0 shrink-0 sm:flex-1 sm:justify-end">
+    <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 px-3 py-3 shrink-0 md:px-4">
+      <div className="w-full flex flex-col gap-1 md:gap-0 md:block md:relative">
+        {/* Row 1: middle tab aligned with page center; logo in right corner. Below md: mobile (Live left, theme+logo right). md+: single row with all nav. */}
+        <div className="flex items-center gap-2 md:gap-4 min-w-0">
+          {/* Left: mobile = Live Results link; md+ = spacer for center nav */}
+          <div className="flex items-center min-w-0 shrink md:flex-1 md:justify-end">
             {showLiveResults && (
               <Link
                 href="/live-results"
-                className={`sm:hidden shrink-0 flex items-center gap-8 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
+                className={`md:hidden flex items-center gap-2 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
               >
                 <span
-                  className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-4"
+                  className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
                   aria-hidden
                 />
-                <span className="whitespace-nowrap text-xs font-medium">Live Election Results</span>
+                <span className="whitespace-nowrap truncate text-xs font-medium">Live Election Results</span>
               </Link>
             )}
           </div>
-          {/* Center: nav tabs — middle tab aligns with page center when left/right spacers are equal */}
-          <nav className="flex items-center justify-center gap-2 sm:gap-5 text-xs sm:text-sm font-medium shrink-0">
+          {/* Center: nav tabs (visible from md up); allow shrink so landscape/small desktop doesn't overlap */}
+          <nav className="flex items-center justify-center gap-2 md:gap-5 text-xs md:text-sm font-medium min-w-0 shrink">
             <Link
               href="/live-results"
-              className={`shrink-0 flex items-center gap-8 py-2 -my-2 hidden sm:inline ${pathname === "/live-results" ? activeClass : linkClass}`}
+              className={`flex items-center gap-2 py-2 -my-2 hidden md:inline min-w-0 truncate ${pathname === "/live-results" ? activeClass : linkClass}`}
             >
               <span
                 className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
                 aria-hidden
               />
-              <span className="whitespace-nowrap">Live Election Results</span>
+              <span className="whitespace-nowrap truncate">Live Election Results</span>
             </Link>
             <Link
               href="/notable-races"
-              className={`shrink-0 py-2 -my-2 whitespace-nowrap hidden sm:inline ${pathname === "/notable-races" ? activeClass : linkClass}`}
+              className={`py-2 -my-2 whitespace-nowrap truncate hidden md:inline min-w-0 ${pathname === "/notable-races" ? activeClass : linkClass}`}
             >
               Notable Races
             </Link>
             <Link
               href="/state-of-nation"
-              className={`shrink-0 py-2 -my-2 whitespace-nowrap hidden sm:inline ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
+              className={`py-2 -my-2 whitespace-nowrap truncate hidden md:inline min-w-0 ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
               title="State of the Nation – Electoral map and election results"
             >
               State of the Nation
             </Link>
           </nav>
-          {/* Right spacer (sm+: equal to left) + logo + theme in corner */}
-          <div className="flex items-center justify-end min-w-0 flex-1 gap-1 sm:gap-2">
+          {/* Right: theme + logo + title */}
+          <div className="flex items-center justify-end min-w-0 flex-1 gap-1 md:gap-2">
             <button
               type="button"
               onClick={toggleTheme}
@@ -134,24 +134,24 @@ export function AppHeader() {
             </button>
             <Link
               href={defaultHomeHref}
-              className={`flex items-center gap-2 sm:gap-2.5 text-base sm:text-xl font-bold hover:opacity-90 py-2 shrink-0 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
+              className={`flex items-center gap-2 md:gap-2.5 text-base md:text-xl font-bold hover:opacity-90 py-2 min-w-0 md:shrink-0 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
             >
               <LogoIcon className="shrink-0" />
-              <span className="whitespace-nowrap">US Election Tracker</span>
+              <span className="whitespace-nowrap truncate">US Election Tracker</span>
             </Link>
           </div>
         </div>
-        {/* Row 2 (mobile only): Notable Races (left), State of the Nation (right) */}
-        <div className="flex sm:hidden items-center justify-between gap-2 py-0.5">
+        {/* Row 2 (below md only): Notable Races (left), State of the Nation (right) */}
+        <div className="flex md:hidden items-center justify-between gap-4 min-w-0 py-0.5">
           <Link
             href="/notable-races"
-            className={`py-1.5 text-xs font-medium shrink-0 ${pathname === "/notable-races" ? activeClass : linkClass}`}
+            className={`min-w-0 truncate py-1.5 text-xs font-medium ${pathname === "/notable-races" ? activeClass : linkClass}`}
           >
             Notable Races
           </Link>
           <Link
             href="/state-of-nation"
-            className={`py-1.5 text-xs font-medium shrink-0 ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
+            className={`min-w-0 truncate py-1.5 text-xs font-medium text-right ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
             title="State of the Nation – Electoral map and election results"
           >
             State of the Nation

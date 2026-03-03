@@ -265,7 +265,7 @@ export function StateOfNation({ data, section }: StateOfNationProps) {
 
       {selectedStateCode && (
         <div
-          className="fixed bottom-4 right-4 z-50 w-72 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-xl p-3"
+          className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 sm:left-auto sm:right-4 sm:top-auto sm:bottom-4 sm:translate-x-0 sm:translate-y-0 w-72 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-xl p-3"
           role="dialog"
           aria-modal="false"
           aria-labelledby="state-results-title"

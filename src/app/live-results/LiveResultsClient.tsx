@@ -50,6 +50,29 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
       .catch(() => setError("Failed to load data."));
   }, [data]);
 
+  // Refetch when tab/window gains focus so PATCH updates appear as soon as user returns
+  useEffect(() => {
+    const refetch = () => {
+      fetch("/api/election")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: ElectionData | null) => {
+          if (d) setData((prev) => (prev ? d : prev));
+        })
+        .catch(() => {});
+    };
+    const onVisible = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") refetch();
+    };
+    if (typeof document !== "undefined" && document.addEventListener) {
+      document.addEventListener("visibilitychange", onVisible);
+      window.addEventListener("focus", refetch);
+      return () => {
+        document.removeEventListener("visibilitychange", onVisible);
+        window.removeEventListener("focus", refetch);
+      };
+    }
+  }, []);
+
   useEffect(() => {
     const update = () => {
       setTimeRemainingMs((prev) => Math.max(0, POLL_CLOSES_AT_UTC_MS - Date.now()));
@@ -66,7 +89,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
         .then((r) => (r.ok ? r.json() : null))
         .then((d: ElectionData | null) => { if (d) setData(d); })
         .catch(() => {});
-    }, 30_000);
+    }, 15_000);
     return () => clearInterval(interval);
   }, [data]);
 
