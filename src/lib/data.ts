@@ -116,8 +116,10 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
       ...current,
       notableRaces: current.notableRaces.map((r, i) => (i === raceIndex ? nextRace : r)),
     };
-    await mkdir(DATA_DIR, { recursive: true });
-    await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    if (!isNetlify) {
+      await mkdir(DATA_DIR, { recursive: true });
+      await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    }
     await writeToBlob(next);
     return next;
   }
@@ -143,8 +145,10 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
         },
       },
     };
-    await mkdir(DATA_DIR, { recursive: true });
-    await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    if (!isNetlify) {
+      await mkdir(DATA_DIR, { recursive: true });
+      await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    }
     await writeToBlob(next);
     return next;
   }
