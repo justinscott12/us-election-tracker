@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
 import os from "os";
+import { getStore } from "@netlify/blobs";
 import type {
   ElectionData,
   ElectionResultUpdate,
@@ -10,14 +11,42 @@ import type {
 } from "@/types/election";
 import { SEED_DATA } from "./seed-data";
 
-const isServerless =
-  !!process.env.NETLIFY || !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
-const DATA_DIR = isServerless
-  ? path.join(os.tmpdir(), "election-tracker-data")
-  : path.join(process.cwd(), "data");
+const isNetlify = !!process.env.NETLIFY;
+
+const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "election.json");
 
+const BLOB_STORE_NAME = process.env.ELECTION_BLOB_STORE || "election-tracker";
+const BLOB_KEY = process.env.ELECTION_BLOB_KEY || "election.json";
+
+async function readFromBlob(): Promise<ElectionData | null> {
+  if (!isNetlify) return null;
+  try {
+    const store = getStore(BLOB_STORE_NAME);
+    const value = await store.get(BLOB_KEY, { type: "json" });
+    if (!value) return null;
+    return value as ElectionData;
+  } catch {
+    return null;
+  }
+}
+
+async function writeToBlob(data: ElectionData): Promise<void> {
+  if (!isNetlify) return;
+  const store = getStore(BLOB_STORE_NAME);
+  await store.set(BLOB_KEY, JSON.stringify(data), { contentType: "application/json" });
+}
+
 export async function getData(): Promise<ElectionData> {
+  // In Netlify production, prefer durable blob store
+  if (isNetlify) {
+    const blobData = await readFromBlob();
+    if (blobData) {
+      return blobData;
+    }
+  }
+
+  // Fallback to local JSON file (development or when blob missing)
   try {
     const raw = await readFile(DATA_FILE, "utf-8");
     return JSON.parse(raw) as ElectionData;
@@ -89,6 +118,7 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
     };
     await mkdir(DATA_DIR, { recursive: true });
     await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    await writeToBlob(next);
     return next;
   }
 
@@ -109,11 +139,13 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
           ...current.stateOfNation.presidential,
           stateFills: nextFills,
           stateResults: nextStateResults,
+          lastUpdated: new Date().toISOString(),
         },
       },
     };
     await mkdir(DATA_DIR, { recursive: true });
     await writeFile(DATA_FILE, JSON.stringify(next, null, 2), "utf-8");
+    await writeToBlob(next);
     return next;
   }
 
