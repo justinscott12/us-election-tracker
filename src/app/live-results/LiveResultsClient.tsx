@@ -39,6 +39,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
   const [error, setError] = useState<string | null>(null);
   const [timeRemainingMs, setTimeRemainingMs] = useState<number | null>(null);
 
+  // Fetch when we have no data (e.g. no initialData from server)
   useEffect(() => {
     if (data) return;
     fetch("/api/election")
@@ -49,6 +50,16 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
       .then((d: ElectionData) => setData(d))
       .catch(() => setError("Failed to load data."));
   }, [data]);
+
+  // When we have initialData from server, refetch once on mount so we show the same
+  // up-to-date data as the Notable Races page (e.g. after a PATCH to /api/election)
+  useEffect(() => {
+    if (!initialData) return;
+    fetch("/api/election")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: ElectionData | null) => { if (d) setData(d); })
+      .catch(() => {});
+  }, []);
 
   // Refetch when tab/window gains focus so PATCH updates appear as soon as user returns
   useEffect(() => {

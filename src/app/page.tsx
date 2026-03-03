@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION } from "@/lib/seo";
+import { LIVE_RESULTS_ENABLED } from "@/lib/feature-flags";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,11 +16,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Server-rendered home page for SEO. Crawlers see real content and keywords
- * (election results, election live results, Texas primaries, Texas election results today)
- * plus clear links to Live Results, Notable Races, and State of the Nation.
+ * When live results are enabled, default (/) redirects to /live-results.
+ * Otherwise, server-rendered home with links to Live Results, Notable Races, State of the Nation.
  */
 export default function Home() {
+  if (LIVE_RESULTS_ENABLED) {
+    redirect("/live-results");
+  }
   return (
     <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full px-4 py-8 sm:py-12">
       <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-4">

@@ -77,16 +77,16 @@ export function AppHeader() {
   const activeClass = "text-slate-900 dark:text-white";
 
   return (
-    <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 px-3 py-3 shrink-0 md:px-4">
-      <div className="w-full flex flex-col gap-1 md:gap-0 md:block md:relative">
-        {/* Row 1: middle tab aligned with page center; logo in right corner. Below md: mobile (Live left, theme+logo right). md+: single row with all nav. */}
-        <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          {/* Left: mobile = Live Results link; md+ = spacer for center nav */}
-          <div className="flex items-center min-w-0 shrink md:flex-1 md:justify-end">
+    <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 px-3 py-3 shrink-0 lg:px-4">
+      <div className="w-full flex flex-col gap-1 lg:gap-0 lg:block lg:relative">
+        {/* Row 1: Below lg = two-row layout (Live left, theme+logo right). lg+ = single row with all nav. */}
+        <div className="flex items-center gap-2 lg:gap-4 min-w-0">
+          {/* Left: below lg = Live Results link; lg+ = spacer for center nav */}
+          <div className="flex items-center min-w-0 shrink lg:flex-1 lg:justify-end">
             {showLiveResults && (
               <Link
                 href="/live-results"
-                className={`md:hidden flex items-center gap-2 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
+                className={`lg:hidden flex items-center gap-2 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
               >
                 <span
                   className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
@@ -96,11 +96,11 @@ export function AppHeader() {
               </Link>
             )}
           </div>
-          {/* Center: nav tabs (visible from md up); allow shrink so landscape/small desktop doesn't overlap */}
-          <nav className="flex items-center justify-center gap-2 md:gap-5 text-xs md:text-sm font-medium min-w-0 shrink">
+          {/* Center: nav tabs (visible from lg up); below lg hidden so row 2 shows Notable + State */}
+          <nav className="flex items-center justify-center gap-2 lg:gap-5 text-xs lg:text-sm font-medium min-w-0 shrink">
             <Link
               href="/live-results"
-              className={`flex items-center gap-2 py-2 -my-2 hidden md:inline min-w-0 truncate ${pathname === "/live-results" ? activeClass : linkClass}`}
+              className={`flex items-center gap-2 py-2 -my-2 hidden lg:inline min-w-0 truncate ${pathname === "/live-results" ? activeClass : linkClass}`}
             >
               <span
                 className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
@@ -110,20 +110,20 @@ export function AppHeader() {
             </Link>
             <Link
               href="/notable-races"
-              className={`py-2 -my-2 whitespace-nowrap truncate hidden md:inline min-w-0 ${pathname === "/notable-races" ? activeClass : linkClass}`}
+              className={`py-2 -my-2 whitespace-nowrap truncate hidden lg:inline min-w-0 ${pathname === "/notable-races" ? activeClass : linkClass}`}
             >
               Notable Races
             </Link>
             <Link
               href="/state-of-nation"
-              className={`py-2 -my-2 whitespace-nowrap truncate hidden md:inline min-w-0 ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
+              className={`py-2 -my-2 whitespace-nowrap truncate hidden lg:inline min-w-0 ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
               title="State of the Nation – Electoral map and election results"
             >
               State of the Nation
             </Link>
           </nav>
           {/* Right: theme + logo + title */}
-          <div className="flex items-center justify-end min-w-0 flex-1 gap-1 md:gap-2">
+          <div className="flex items-center justify-end min-w-0 flex-1 gap-1 lg:gap-2">
             <button
               type="button"
               onClick={toggleTheme}
@@ -134,15 +134,15 @@ export function AppHeader() {
             </button>
             <Link
               href={defaultHomeHref}
-              className={`flex items-center gap-2 md:gap-2.5 text-base md:text-xl font-bold hover:opacity-90 py-2 min-w-0 md:shrink-0 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
+              className={`flex items-center gap-2 lg:gap-2.5 text-base lg:text-xl font-bold hover:opacity-90 py-2 min-w-0 lg:shrink-0 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
             >
               <LogoIcon className="shrink-0" />
               <span className="whitespace-nowrap truncate">US Election Tracker</span>
             </Link>
           </div>
         </div>
-        {/* Row 2 (below md only): Notable Races (left), State of the Nation (right) */}
-        <div className="flex md:hidden items-center justify-between gap-4 min-w-0 py-0.5">
+        {/* Row 2 (below lg): Notable Races (left), State of the Nation (right) — prevents overlap on vertical mobile */}
+        <div className="flex lg:hidden items-center justify-between gap-4 min-w-0 py-0.5">
           <Link
             href="/notable-races"
             className={`min-w-0 truncate py-1.5 text-xs font-medium ${pathname === "/notable-races" ? activeClass : linkClass}`}
