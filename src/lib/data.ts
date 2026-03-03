@@ -34,7 +34,7 @@ async function readFromBlob(): Promise<ElectionData | null> {
 async function writeToBlob(data: ElectionData): Promise<void> {
   if (!isNetlify) return;
   const store = getStore(BLOB_STORE_NAME);
-  await store.set(BLOB_KEY, JSON.stringify(data), { contentType: "application/json" });
+  await store.set(BLOB_KEY, JSON.stringify(data));
 }
 
 export async function getData(): Promise<ElectionData> {
