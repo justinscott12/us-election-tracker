@@ -31,7 +31,7 @@ export default function NotableRacesPage() {
       .catch(() => setError("Failed to load election data."));
   }, []);
 
-  // Poll for updates so results update without full page refresh
+  // Poll every 15s so PATCH updates appear without manual refresh
   useEffect(() => {
     if (!data) return;
     const interval = setInterval(() => {
@@ -39,7 +39,7 @@ export default function NotableRacesPage() {
         .then((r) => (r.ok ? r.json() : null))
         .then((d: ElectionData | null) => { if (d) setData(d); })
         .catch(() => {});
-    }, 30_000);
+    }, 15_000);
     return () => clearInterval(interval);
   }, [data]);
 

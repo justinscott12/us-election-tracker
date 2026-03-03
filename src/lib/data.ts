@@ -81,6 +81,7 @@ export async function applyResultUpdate(update: ElectionResultUpdate): Promise<E
       ...(status !== undefined && { status }),
       ...(votesCountedPct !== undefined && { votesCountedPct }),
       results: nextResults,
+      lastUpdated: new Date().toISOString(),
     };
     const next: ElectionData = {
       ...current,

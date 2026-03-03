@@ -33,6 +33,37 @@ function formatRaceDate(isoDate: string): string {
   return year !== yearNow ? `${month} ${day}${suffix}, ${year}` : `${month} ${day}${suffix}`;
 }
 
+/** Last word of full name (e.g. "Jasmine Crockett" → "Crockett") */
+function lastName(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  return parts.length > 1 ? parts[parts.length - 1]! : name;
+}
+
+/** Sort results by leader first: pct descending, then votes descending */
+function sortResultsByLeader<T extends { pct?: number; votes?: number }>(results: T[]): T[] {
+  return [...results].sort((a, b) => {
+    const ap = a.pct ?? -1;
+    const bp = b.pct ?? -1;
+    if (bp !== ap) return bp - ap;
+    return (b.votes ?? -1) - (a.votes ?? -1);
+  });
+}
+
+/** Format ISO timestamp as "Updated 3:45 PM" (today), "Updated Mar 2, 3:45 PM" (this year), or "Updated Mar 2, 2025, 3:45 PM" (other year) */
+function formatLastUpdated(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const now = new Date();
+  const sameDay = d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  const timeStr = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  if (sameDay) return `Updated ${timeStr}`;
+  const sameYear = d.getFullYear() === now.getFullYear();
+  const dateStr = sameYear
+    ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return `Updated ${dateStr}, ${timeStr}`;
+}
+
 interface NotableRacesProps {
   races: NotableRace[];
   stateFills?: StateMap;
@@ -42,11 +73,13 @@ interface NotableRacesProps {
   title?: string;
   /** Heading level for the title (default 1). Use 2 when page already has an h1, e.g. live-results. */
   titleHeadingLevel?: 1 | 2;
+  /** When true (e.g. Live Results page), show compact results on each card: last names and pct */
+  showResultsOnCards?: boolean;
 }
 
 const STORAGE_KEY = "notableRacesSelectedState";
 
-export function NotableRaces({ races, stateFills = {}, congress, title = "Upcoming Major Primaries", titleHeadingLevel = 1 }: NotableRacesProps) {
+export function NotableRaces({ races, stateFills = {}, congress, title = "Upcoming Major Primaries", titleHeadingLevel = 1, showResultsOnCards = false }: NotableRacesProps) {
   const senateDemAligned = congress ? congress.senateDem + (congress.senateInd ?? 0) : 0;
   const [selectedRace, setSelectedRace] = useState<NotableRace | null>(null);
   const [selectedStateCode, setSelectedStateCode] = useState<string | null>(null);
@@ -170,7 +203,7 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
               >
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className="font-medium text-slate-900 dark:text-slate-100">{race.title}</span>
-                  {race.status && (
+                  {!showResultsOnCards && race.status && (
                     <span className={`text-xs font-medium rounded px-2 py-0.5 shrink-0 inline-flex items-center gap-1 ${STATUS_STYLES[race.status]}`}>
                       {(race.status === "called" || race.status === "final") && (
                         <span className="text-green-600 dark:text-green-400" aria-hidden>✓</span>
@@ -179,20 +212,99 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                     </span>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 mt-2">
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
-                    {formatRaceDate(race.date)}
-                  </span>
-                  {race.state && (
-                    <span className="text-xs rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-slate-600 dark:text-slate-300">
-                      {race.state}
+                {showResultsOnCards ? (
+                  <>
+                    <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
+                      {formatRaceDate(race.date)}
+                      {race.state && (
+                        <>
+                          {" "}
+                          <span className="text-xs rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 font-normal text-slate-600 dark:text-slate-300">
+                            {race.state}
+                          </span>
+                        </>
+                      )}
+                      {" "}
+                      <span className="text-xs uppercase text-slate-400 dark:text-slate-500 font-normal">{race.type}</span>
+                    </p>
+                    {race.status && (
+                      <p className="mt-1">
+                        <span className={`text-xs font-medium rounded px-2 py-0.5 inline-flex items-center gap-1 ${STATUS_STYLES[race.status]}`}>
+                          {(race.status === "called" || race.status === "final") && (
+                            <span className="text-green-600 dark:text-green-400" aria-hidden>✓</span>
+                          )}
+                          {STATUS_LABELS[race.status]}
+                        </span>
+                      </p>
+                    )}
+                    {race.votesCountedPct != null && (
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        {race.votesCountedPct}% est. votes in
+                      </p>
+                    )}
+                    {race.results && race.results.length > 0 && race.results.some((r) => r.pct != null) && (
+                      <p className="mt-2 flex flex-wrap gap-1.5">
+                        {sortResultsByLeader(race.results).map((r, idx) => {
+                          const pct = r.pct != null ? r.pct : 0;
+                          const party = (r.party ?? "").toUpperCase();
+                          const parties = [...new Set(race.results!.map((x) => (x.party ?? "").toUpperCase()))].filter(Boolean);
+                          const sameParty = parties.length <= 1;
+                          const style =
+                            sameParty && party === "D"
+                              ? idx % 3 === 0
+                                ? "bg-blue-800 text-white dark:bg-blue-700 dark:text-white"
+                                : idx % 3 === 1
+                                  ? "bg-blue-500 text-white dark:bg-blue-400 dark:text-white"
+                                  : "bg-blue-300 text-blue-900 dark:bg-blue-200 dark:text-blue-900"
+                              : sameParty && party === "R"
+                                ? idx % 3 === 0
+                                  ? "bg-red-800 text-white dark:bg-red-700 dark:text-white"
+                                  : idx % 3 === 1
+                                    ? "bg-red-500 text-white dark:bg-red-400 dark:text-white"
+                                    : "bg-red-300 text-red-900 dark:bg-red-200 dark:text-red-900"
+                                : party === "D"
+                                  ? "bg-blue-500 text-white dark:bg-blue-400 dark:text-white"
+                                  : party === "R"
+                                    ? "bg-red-500 text-white dark:bg-red-400 dark:text-white"
+                                    : "bg-slate-500 text-white dark:bg-slate-400 dark:text-white";
+                          return (
+                            <span
+                              key={r.name}
+                              className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium tabular-nums ${style}`}
+                            >
+                              {lastName(r.name)} {pct}%
+                            </span>
+                          );
+                        })}
+                      </p>
+                    )}
+                    {race.lastUpdated && (
+                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400" title={new Date(race.lastUpdated).toLocaleString()}>
+                        {formatLastUpdated(race.lastUpdated)}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
+                      {formatRaceDate(race.date)}
                     </span>
-                  )}
-                  <span className="text-xs uppercase text-slate-400 dark:text-slate-500">{race.type}</span>
-                  {race.votesCountedPct != null && (
-                    <span className="text-xs text-slate-500 dark:text-slate-400">{race.votesCountedPct}% est. votes in</span>
-                  )}
-                </div>
+                    {race.state && (
+                      <span className="text-xs rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-slate-600 dark:text-slate-300">
+                        {race.state}
+                      </span>
+                    )}
+                    <span className="text-xs uppercase text-slate-400 dark:text-slate-500">{race.type}</span>
+                    {race.votesCountedPct != null && (
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{race.votesCountedPct}% est. votes in</span>
+                    )}
+                    {race.lastUpdated && (
+                      <span className="text-xs text-slate-500 dark:text-slate-400" title={new Date(race.lastUpdated).toLocaleString()}>
+                        {formatLastUpdated(race.lastUpdated)}
+                      </span>
+                    )}
+                  </div>
+                )}
                 {(race.status === "called" || race.status === "final") && race.results?.some((r) => r.winner) && (
                   <p className="mt-2 text-sm font-medium text-green-700 dark:text-green-400">
                     Winner: {race.results.find((r) => r.winner)!.name}
@@ -249,6 +361,14 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   {STATE_ELECTORAL_VOTES[selectedStateCode]} electoral vote{STATE_ELECTORAL_VOTES[selectedStateCode] !== 1 ? "s" : ""}
                 </p>
               )}
+              {(() => {
+                const latest = stateRaces.reduce<string | null>((acc, r) => (r.lastUpdated && (!acc || r.lastUpdated > acc) ? r.lastUpdated : acc), null);
+                return latest ? (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5" title={new Date(latest).toLocaleString()}>
+                    {formatLastUpdated(latest)}
+                  </p>
+                ) : null;
+              })()}
             </div>
             <button
               type="button"
@@ -282,6 +402,11 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 sm:mb-1.5 tabular-nums">
                   {formatRaceDate(race.date)}
                 </p>
+                {race.lastUpdated && (
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-1 sm:mb-1.5" title={new Date(race.lastUpdated).toLocaleString()}>
+                    {formatLastUpdated(race.lastUpdated)}
+                  </p>
+                )}
                 {race.status && (
                   <p className="mb-1 sm:mb-1.5">
                     <span className={`text-xs font-medium rounded px-2 py-1 inline-flex items-center gap-1.5 ${STATUS_STYLES[race.status]}`}>
@@ -303,6 +428,9 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   </p>
                 )}
                 {race.results && race.results.length > 0 ? (
+                  (() => {
+                    const sortedResults = sortResultsByLeader(race.results);
+                    return (
                   <div className="overflow-x-auto -mx-1 mb-1.5 sm:mb-2">
                     <table className="w-full text-xs">
                       <thead>
@@ -320,12 +448,12 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                         </tr>
                       </thead>
                       <tbody>
-                        {race.results.map((r) => (
+                        {sortedResults.map((r, idx) => (
                           <tr key={r.name} className="border-b border-slate-100 dark:border-slate-700/50">
                             <td className="py-1 sm:py-1.5 pr-2">
                               <span className="text-slate-700 dark:text-slate-300">{r.name}</span>
-                              {(race.status === "called" || race.status === "final") && r.winner && (
-                                <span className="text-green-600 dark:text-green-400 ml-1" aria-hidden>✓</span>
+                              {(race.status === "called" || race.status === "final") && idx === 0 && (
+                                <span className="text-green-600 dark:text-green-400 ml-1" aria-hidden title="Winner">✓</span>
                               )}
                             </td>
                             {showParty && (
@@ -346,6 +474,8 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                       </tbody>
                     </table>
                   </div>
+                    );
+                  })()
                 ) : (
                   <p className="text-xs text-slate-500 dark:text-slate-400 py-1">No results yet.</p>
                 )}

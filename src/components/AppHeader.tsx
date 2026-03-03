@@ -83,27 +83,25 @@ export function AppHeader() {
         <div className="flex items-center gap-2 lg:gap-4 min-w-0">
           {/* Left: below lg = Live Results link; lg+ = spacer for center nav */}
           <div className="flex items-center min-w-0 shrink lg:flex-1 lg:justify-end">
-            {showLiveResults && (
-              <Link
-                href="/live-results"
-                className={`lg:hidden flex items-center gap-2 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
-              >
-                <span
-                  className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
-                  aria-hidden
-                />
-                <span className="whitespace-nowrap truncate text-xs font-medium">Live Election Results</span>
-              </Link>
-            )}
+            <Link
+              href="/live-results"
+              className={`lg:hidden flex items-center gap-2 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
+            >
+              <span
+                className="live-dot size-3 shrink-0 rounded-full bg-red-500 ring-2 ring-red-400/60 dark:ring-red-400/70 inline-block flex-none"
+                aria-hidden
+              />
+              <span className="whitespace-nowrap truncate text-xs font-medium">Live Election Results</span>
+            </Link>
           </div>
           {/* Center: nav tabs (visible from lg up); below lg hidden so row 2 shows Notable + State */}
           <nav className="flex items-center justify-center gap-2 lg:gap-5 text-xs lg:text-sm font-medium min-w-0 shrink">
             <Link
               href="/live-results"
-              className={`flex items-center gap-2 py-2 -my-2 hidden lg:inline min-w-0 truncate ${pathname === "/live-results" ? activeClass : linkClass}`}
+              className={`flex items-center gap-2 py-2 -my-2 hidden lg:inline min-w-0 ${pathname === "/live-results" ? activeClass : linkClass}`}
             >
               <span
-                className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
+                className="live-dot size-3 shrink-0 rounded-full bg-red-500 ring-2 ring-red-400/60 dark:ring-red-400/70 inline-block flex-none"
                 aria-hidden
               />
               <span className="whitespace-nowrap truncate">Live Election Results</span>

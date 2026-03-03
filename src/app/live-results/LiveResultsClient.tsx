@@ -34,6 +34,21 @@ function formatTimeRemaining(ms: number): string {
   return parts.join(" ");
 }
 
+/** Format ISO timestamp as "3:45 PM" (today), "Mar 2, 3:45 PM" (this year), or "Mar 2, 2025, 3:45 PM" (other year) */
+function formatLastUpdated(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const now = new Date();
+  const sameDay = d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  const timeStr = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  if (sameDay) return timeStr;
+  const sameYear = d.getFullYear() === now.getFullYear();
+  const dateStr = sameYear
+    ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return `${dateStr}, ${timeStr}`;
+}
+
 export function LiveResultsClient({ initialData }: { initialData: ElectionData | null }) {
   const [data, setData] = useState<ElectionData | null>(initialData);
   const [error, setError] = useState<string | null>(null);
@@ -93,6 +108,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
     return () => clearInterval(id);
   }, []);
 
+  // Poll every 5s so PATCH updates appear within a few seconds without manual refresh
   useEffect(() => {
     if (!data) return;
     const interval = setInterval(() => {
@@ -100,7 +116,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
         .then((r) => (r.ok ? r.json() : null))
         .then((d: ElectionData | null) => { if (d) setData(d); })
         .catch(() => {});
-    }, 15_000);
+    }, 5_000);
     return () => clearInterval(interval);
   }, [data]);
 
@@ -122,6 +138,10 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
 
   const races = filterLiveRaces(data.notableRaces);
   const stateFills = { TX: "highlight" as const };
+  const latestUpdate = races.reduce<string | null>((acc, r) => {
+    if (!r.lastUpdated) return acc;
+    return !acc || r.lastUpdated > acc ? r.lastUpdated : acc;
+  }, null);
 
   return (
     <div className="flex-1 flex flex-col">
@@ -145,12 +165,18 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
             Polls have closed in Texas. Live results will continue to update as new counts are reported.
           </p>
         )}
+        {latestUpdate && (
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400" title={new Date(latestUpdate).toLocaleString()}>
+            Results last updated {formatLastUpdated(latestUpdate)}
+          </p>
+        )}
       </div>
       <NotableRaces
         races={races}
         stateFills={stateFills}
         title="Notable Races Happening Today"
         titleHeadingLevel={2}
+        showResultsOnCards
       />
     </div>
   );

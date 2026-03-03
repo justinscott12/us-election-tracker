@@ -107,6 +107,8 @@ export interface NotableRace {
   votesCountedPct?: number;
   /** Candidate results; winner should have winner: true for checkmark */
   results?: NotableRaceResult[];
+  /** ISO timestamp when this race was last updated (set by PATCH); shown as "Updated 3:45 PM" */
+  lastUpdated?: string;
 }
 
 export interface ElectionData {
