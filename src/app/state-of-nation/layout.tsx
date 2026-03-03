@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, STATE_OF_NATION_PHRASES } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "State of the Nation – Electoral Map & Congress Results",
+  title: "State of the Nation – Electoral Map, Election Results by State & Congress Results",
   description:
-    "US election state of the nation: interactive electoral map, presidential results by state, Congress balance (Senate & House), and governor races.",
+    "State of the nation: electoral map, election results by state, election map. Congress results, Senate results, House results. Live election results and presidential election results.",
+  keywords: [...STATE_OF_NATION_PHRASES],
   openGraph: {
-    title: "State of the Nation – Electoral Map & Congress | US Election Tracker",
+    title: "State of the Nation – Electoral Map & Election Results by State | " + SITE_NAME,
     description:
-      "Interactive US electoral map, presidential results by state, Senate and House balance, and governor races.",
+      "Electoral map and election results by state. Congress results, Senate and House results. US election map and state election results.",
     url: `${SITE_URL}/state-of-nation`,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "State of the Nation – Electoral Map | " + SITE_NAME,
+    description: "Electoral map, election results by state, Congress results. Election map and state election results.",
   },
   alternates: { canonical: `${SITE_URL}/state-of-nation` },
 };

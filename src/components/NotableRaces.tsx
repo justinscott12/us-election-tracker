@@ -40,14 +40,17 @@ interface NotableRacesProps {
   congress?: CongressSummary;
   /** Optional heading above the race cards (default: "Upcoming Major Primaries") */
   title?: string;
+  /** Heading level for the title (default 1). Use 2 when page already has an h1, e.g. live-results. */
+  titleHeadingLevel?: 1 | 2;
 }
 
 const STORAGE_KEY = "notableRacesSelectedState";
 
-export function NotableRaces({ races, stateFills = {}, congress, title = "Upcoming Major Primaries" }: NotableRacesProps) {
+export function NotableRaces({ races, stateFills = {}, congress, title = "Upcoming Major Primaries", titleHeadingLevel = 1 }: NotableRacesProps) {
   const senateDemAligned = congress ? congress.senateDem + (congress.senateInd ?? 0) : 0;
   const [selectedRace, setSelectedRace] = useState<NotableRace | null>(null);
   const [selectedStateCode, setSelectedStateCode] = useState<string | null>(null);
+  const [expandedWhyItMatters, setExpandedWhyItMatters] = useState<Set<string>>(new Set());
   const mapRef = useRef<HTMLDivElement>(null);
   const hasRestoredRef = useRef(false);
 
@@ -132,16 +135,28 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
             </div>
           </section>
         )}
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200 text-center">
-          {title}
-        </h1>
+        {titleHeadingLevel === 1 ? (
+          <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200 text-center">
+            {title}
+          </h1>
+        ) : (
+          <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 text-center">
+            {title}
+          </h2>
+        )}
 
         {!races.length ? (
           <p className="text-slate-500 dark:text-slate-400 text-center">
             No upcoming notable races. Use the API to add races.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
+          <div
+            className={`grid gap-4 justify-items-center ${
+              races.length >= 3
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                : "grid-cols-1 sm:grid-cols-2"
+            }`}
+          >
             {races.map((race) => (
               <button
                 key={race.id}
@@ -193,17 +208,7 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
 
         <div
           ref={mapRef}
-          className="scroll-mt-4 transition-[transform] duration-200"
-          style={
-            selectedStateCode != null && stateRaces.length > 1
-              ? {
-                  transform:
-                    stateRaces.length > 2
-                      ? "translateX(max(-28rem, -95vw))"
-                      : "translateX(max(-20rem, -90vw))",
-                }
-              : undefined
-          }
+          className="scroll-mt-4"
         >
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200 mb-2 text-center">Map</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-2 text-center">
@@ -224,11 +229,11 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
         </div>
       </div>
 
-      {/* State popup: fixed as before; map shifts left via container padding when this is open */}
+      {/* State popup: same style as State of the Nation (bottom-right corner card) */}
       {selectedStateCode != null && stateRaces.length > 0 && (
         <div
-          className={`fixed bottom-4 right-4 z-50 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-xl p-3 ${
-            stateRaces.length > 2 ? "max-w-4xl w-[95vw]" : stateRaces.length > 1 ? "max-w-2xl w-[90vw]" : "w-72"
+          className={`fixed bottom-4 right-4 z-50 max-h-[70vh] overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-xl p-3 ${
+            stateRaces.length > 2 ? "max-w-2xl w-[95vw]" : stateRaces.length > 1 ? "max-w-xl w-[90vw]" : "w-72"
           }`}
           role="dialog"
           aria-modal="false"
@@ -247,7 +252,7 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
             </div>
             <button
               type="button"
-              onClick={() => { setSelectedStateCode(null); setSelectedRace(null); }}
+              onClick={() => { setSelectedStateCode(null); setSelectedRace(null); setExpandedWhyItMatters(new Set()); }}
               className="shrink-0 p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-lg leading-none"
               aria-label="Close"
             >
@@ -257,16 +262,21 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
           <div
             className={
               stateRaces.length > 2
-                ? "mt-2 gap-4 grid grid-cols-2 md:grid-cols-3"
+                ? "mt-2 gap-3 grid grid-cols-2 md:grid-cols-3"
                 : stateRaces.length > 1
-                  ? "mt-2 gap-4 grid grid-cols-2"
+                  ? "mt-2 gap-3 grid grid-cols-2"
                   : "mt-2"
             }
           >
-            {stateRaces.map((race) => (
+            {stateRaces.map((race) => {
+              const showUnifiedTable = stateRaces.length > 1;
+              const showParty = showUnifiedTable || race.results?.some((r) => r.party != null);
+              const showVotes = showUnifiedTable || race.results?.some((r) => r.votes != null);
+              const showPct = showUnifiedTable || race.results?.some((r) => r.pct != null);
+              return (
               <div
                 key={race.id}
-                className={stateRaces.length > 1 ? "min-w-0 border border-slate-200 dark:border-slate-600 rounded-lg p-2.5" : ""}
+                className={stateRaces.length > 1 ? "min-w-0 border border-slate-200 dark:border-slate-600 rounded-lg p-2 flex flex-col" : ""}
               >
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 font-medium">{race.title}</p>
                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5 tabular-nums">
@@ -287,9 +297,9 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                     Winner: {race.results.find((r) => r.winner)!.name}
                   </p>
                 )}
-                {race.votesCountedPct != null && (
+                {(showUnifiedTable || race.votesCountedPct != null) && (
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1.5">
-                    {race.votesCountedPct}% est. votes in
+                    {race.votesCountedPct != null ? `${race.votesCountedPct}% est. votes in` : "0% est. votes in"}
                   </p>
                 )}
                 {race.results && race.results.length > 0 ? (
@@ -298,13 +308,13 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                       <thead>
                         <tr className="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-600">
                           <th className="text-left py-1 pr-2 font-medium">Candidate</th>
-                          {race.results.some((r) => r.party != null) && (
+                          {showParty && (
                             <th className="text-right py-1 pl-2 pr-2 font-medium">Party</th>
                           )}
-                          {race.results.some((r) => r.votes != null) && (
+                          {showVotes && (
                             <th className="text-right py-1 pl-2 font-medium">Votes</th>
                           )}
-                          {race.results.some((r) => r.pct != null) && (
+                          {showPct && (
                             <th className="text-right py-1 pl-2 font-medium">Pct.</th>
                           )}
                         </tr>
@@ -318,17 +328,17 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                                 <span className="text-green-600 dark:text-green-400 ml-1" aria-hidden>✓</span>
                               )}
                             </td>
-                            {race.results!.some((x) => x.party != null) && (
+                            {showParty && (
                               <td className="py-1.5 pl-2 pr-2 text-right text-slate-600 dark:text-slate-400">{r.party ?? "—"}</td>
                             )}
-                            {race.results!.some((x) => x.votes != null) && (
+                            {showVotes && (
                               <td className="py-1.5 pl-2 text-right text-slate-700 dark:text-slate-300 tabular-nums">
-                                {r.votes != null ? r.votes.toLocaleString() : "—"}
+                                {r.votes != null ? r.votes.toLocaleString() : (showUnifiedTable ? "0" : "—")}
                               </td>
                             )}
-                            {race.results!.some((x) => x.pct != null) && (
+                            {showPct && (
                               <td className="py-1.5 pl-2 text-right text-slate-900 dark:text-slate-100 tabular-nums">
-                                {r.pct != null ? `${r.pct}%` : "—"}
+                                {r.pct != null ? `${r.pct}%` : (showUnifiedTable ? "0%" : "—")}
                               </td>
                             )}
                           </tr>
@@ -340,20 +350,39 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   <p className="text-xs text-slate-500 dark:text-slate-400 py-1">No results yet.</p>
                 )}
                 {(race.description || race.significance) && (
-                  <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-600">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Why it matters</p>
-                    <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2">
-                      {race.description && <p>{race.description}</p>}
-                      {race.significance && <p>{race.significance}</p>}
+                  <div className={`mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-600 ${stateRaces.length > 1 ? "mt-auto" : ""}`}>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">Why it matters</p>
+                    <div className="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5">
+                      {race.description && (
+                        <p className={expandedWhyItMatters.has(race.id) ? "" : "line-clamp-2"}>{race.description}</p>
+                      )}
+                      {race.significance && (
+                        <p className={expandedWhyItMatters.has(race.id) ? "" : "line-clamp-2"}>{race.significance}</p>
+                      )}
                     </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedWhyItMatters((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(race.id)) next.delete(race.id);
+                          else next.add(race.id);
+                          return next;
+                        })
+                      }
+                      className="mt-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    >
+                      {expandedWhyItMatters.has(race.id) ? "Show less" : "Show more"}
+                    </button>
                   </div>
                 )}
               </div>
-            ))}
+            );
+            })}
           </div>
           <button
             type="button"
-            onClick={() => { setSelectedStateCode(null); setSelectedRace(null); }}
+            onClick={() => { setSelectedStateCode(null); setSelectedRace(null); setExpandedWhyItMatters(new Set()); }}
             className="mt-3 w-full py-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600"
           >
             Close

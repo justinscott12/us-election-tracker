@@ -43,6 +43,7 @@ export default function StateOfNationPage() {
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
+      <h1 className="sr-only">State of the Nation – Electoral map and election results by state</h1>
       <SubTabs tabs={OFFICE_TABS} active={activeTab} onSelect={setActiveTab} />
       <StateOfNation data={data.stateOfNation} section={activeTab} />
     </div>

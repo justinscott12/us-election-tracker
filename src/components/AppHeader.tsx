@@ -78,59 +78,84 @@ export function AppHeader() {
 
   return (
     <header className="relative border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 px-3 py-3 shrink-0 sm:px-4">
-      <div className="relative max-w-5xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left: on mobile only Live Results + Notable Races; on sm+ all three tabs */}
-        <nav className="flex items-center gap-2 sm:gap-5 text-xs sm:text-sm font-medium min-w-0 shrink-0 max-w-[40%] sm:max-w-[34%] justify-start">
-          {showLiveResults && (
+      <div className="w-full flex flex-col gap-1 sm:gap-0 sm:block sm:relative">
+        {/* Row 1: middle tab aligned with page center; logo in right corner */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Left spacer (sm+: equal to right so center is true middle); mobile: Live Results */}
+          <div className="flex items-center min-w-0 shrink-0 sm:flex-1 sm:justify-end">
+            {showLiveResults && (
+              <Link
+                href="/live-results"
+                className={`sm:hidden shrink-0 flex items-center gap-8 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
+              >
+                <span
+                  className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-4"
+                  aria-hidden
+                />
+                <span className="whitespace-nowrap text-xs font-medium">Live Election Results</span>
+              </Link>
+            )}
+          </div>
+          {/* Center: nav tabs — middle tab aligns with page center when left/right spacers are equal */}
+          <nav className="flex items-center justify-center gap-2 sm:gap-5 text-xs sm:text-sm font-medium shrink-0">
             <Link
               href="/live-results"
-              className={`shrink-0 flex items-center gap-1 sm:gap-1.5 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
+              className={`shrink-0 flex items-center gap-8 py-2 -my-2 hidden sm:inline ${pathname === "/live-results" ? activeClass : linkClass}`}
             >
               <span
-                className="live-dot size-2 shrink-0 rounded-full bg-red-500"
+                className="live-dot size-2 shrink-0 rounded-full bg-red-500 inline-block mr-1"
                 aria-hidden
               />
-              <span className="whitespace-nowrap">Live Results</span>
+              <span className="whitespace-nowrap">Live Election Results</span>
             </Link>
-          )}
+            <Link
+              href="/notable-races"
+              className={`shrink-0 py-2 -my-2 whitespace-nowrap hidden sm:inline ${pathname === "/notable-races" ? activeClass : linkClass}`}
+            >
+              Notable Races
+            </Link>
+            <Link
+              href="/state-of-nation"
+              className={`shrink-0 py-2 -my-2 whitespace-nowrap hidden sm:inline ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
+              title="State of the Nation – Electoral map and election results"
+            >
+              State of the Nation
+            </Link>
+          </nav>
+          {/* Right spacer (sm+: equal to left) + logo + theme in corner */}
+          <div className="flex items-center justify-end min-w-0 flex-1 gap-1 sm:gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {isDark ? <SunIcon /> : <MoonIcon />}
+            </button>
+            <Link
+              href={defaultHomeHref}
+              className={`flex items-center gap-2 sm:gap-2.5 text-base sm:text-xl font-bold hover:opacity-90 py-2 shrink-0 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
+            >
+              <LogoIcon className="shrink-0" />
+              <span className="whitespace-nowrap">US Election Tracker</span>
+            </Link>
+          </div>
+        </div>
+        {/* Row 2 (mobile only): Notable Races (left), State of the Nation (right) */}
+        <div className="flex sm:hidden items-center justify-between gap-2 py-0.5">
           <Link
             href="/notable-races"
-            className={`shrink-0 py-2 -my-2 whitespace-nowrap ${pathname === "/notable-races" ? activeClass : linkClass}`}
+            className={`py-1.5 text-xs font-medium shrink-0 ${pathname === "/notable-races" ? activeClass : linkClass}`}
           >
             Notable Races
           </Link>
           <Link
             href="/state-of-nation"
-            className={`min-w-0 py-2 -my-2 shrink-0 hidden sm:inline ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
-            title="State of the Nation"
+            className={`py-1.5 text-xs font-medium shrink-0 ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
+            title="State of the Nation – Electoral map and election results"
           >
             State of the Nation
           </Link>
-        </nav>
-        <Link
-          href={defaultHomeHref}
-          className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2 text-base sm:text-xl font-bold hover:opacity-90 py-2 ${pathname === "/" || pathname === defaultHomeHref ? activeClass : "text-slate-900 dark:text-white"}`}
-        >
-          <LogoIcon />
-          <span className="whitespace-nowrap">US Election Tracker</span>
-        </Link>
-        {/* Right: on mobile "Nation" + theme; on sm+ theme only */}
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          <Link
-            href="/state-of-nation"
-            className={`py-2 -my-2 text-xs font-medium sm:hidden ${pathname === "/state-of-nation" ? activeClass : linkClass}`}
-            title="State of the Nation"
-          >
-            Nation
-          </Link>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {isDark ? <SunIcon /> : <MoonIcon />}
-          </button>
         </div>
       </div>
     </header>

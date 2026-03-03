@@ -81,7 +81,7 @@ export default function NotableRacesPage() {
   return (
     <div className="flex-1 flex flex-col">
       <SubTabs tabs={OFFICE_TABS} active={activeTab} onSelect={setActiveTab} />
-      <NotableRaces races={races} stateFills={stateFills} />
+      <NotableRaces races={races} stateFills={stateFills} title="Notable Upcoming Races" />
     </div>
   );
 }

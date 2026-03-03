@@ -59,8 +59,8 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Texas",
       stateCode: "TX",
-      description: "Incumbent United States Senator John Cornyn vs Texas Attorney General Ken Paxton vs United States Representative Wesley Hunt.",
-      significance: "This primary is a test of Trump and MAGA’s pull in the Republican Party. Who wins will determine whether Texas doubles down on MAGA with Ken Paxton or moves away from it with John Cornyn. The winner faces the winner of the Crockett vs. Talarico Democratic primary in the general.",
+      description: "Incumbent Senator John Cornyn (establishment conservative) trails Texas Attorney General Ken Paxton (populist) in polls; U.S. Representative Wesley Hunt could push the race to a May 26 runoff if no candidate wins an outright majority.",
+      significance: 'Texas has been a Republican stronghold for generations, but a messy primary could put the Senate seat at risk. Paxton is the frontrunner despite personal and professional scandals, with a loyal base from his attacks on immigration groups and "illegal voting"—and analysts say a Paxton primary win could make the state more open to a Democratic upset in November.',
       status: "too-early",
       results: [
         { name: "John Cornyn", party: "R" },
@@ -76,8 +76,8 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Texas",
       stateCode: "TX",
-      description: "United States Representative Jasmine Crockett vs State Representative James Talarico. Talarico gained significant momentum after a censored national TV interview, raising over $2.5 million in a single day.",
-      significance: "High-stakes clash between a rising House star and a viral grassroots candidate. The winner will face the winner of the GOP primary in the general election in a critical Senate battleground race.",
+      description: "U.S. Representative Jasmine Crockett, a partisan warrior with an in-your-face style, faces state Representative James Talarico, a Presbyterian seminarian aiming to appeal to more moderate voters.",
+      significance: "Marquee Democratic matchup: Crockett could appeal more to primary voters but would have a harder time winning a general election; Talarico is betting on broader appeal. The winner faces the GOP primary winner in a state that could become more competitive if Republicans nominate Paxton.",
       status: "too-early",
       results: [
         { name: "Jasmine Crockett", party: "D" },

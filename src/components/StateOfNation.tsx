@@ -81,7 +81,7 @@ export function StateOfNation({ data, section }: StateOfNationProps) {
                   {presidential.demImageUrl && (
                     <img
                       src={presidential.demImageUrl}
-                      alt=""
+                      alt={`${presidential.demName} – presidential candidate`}
                       className="size-[60px] rounded-full object-cover shrink-0 border-2 border-blue-500/50"
                     />
                   )}
@@ -94,7 +94,7 @@ export function StateOfNation({ data, section }: StateOfNationProps) {
                   {presidential.repImageUrl && (
                     <img
                       src={presidential.repImageUrl}
-                      alt=""
+                      alt={`${presidential.repName} – presidential candidate`}
                       className="size-[60px] rounded-full object-cover shrink-0 border-2 border-red-500/50"
                     />
                   )}

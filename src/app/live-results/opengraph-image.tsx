@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
-import { SITE_NAME } from "@/lib/seo";
 
-export const alt = "US Election Tracker – Election results, live election results, Texas primaries, electoral map, vote results, election tracker";
+export const alt = "Election live results – Texas primaries, election results, election tracker";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,34 +22,45 @@ export default function Image() {
       >
         <div
           style={{
-            fontSize: 56,
+            fontSize: 52,
             fontWeight: 800,
             color: "white",
+            marginBottom: 16,
+            textAlign: "center",
+          }}
+        >
+          Election Live Results
+        </div>
+        <div
+          style={{
+            fontSize: 36,
+            fontWeight: 700,
+            color: "#60a5fa",
             marginBottom: 24,
             textAlign: "center",
           }}
         >
-          {SITE_NAME}
+          Texas Primaries
         </div>
         <div
           style={{
-            fontSize: 28,
+            fontSize: 24,
             color: "#94a3b8",
             textAlign: "center",
-            maxWidth: 900,
+            maxWidth: 800,
             lineHeight: 1.4,
           }}
         >
-          Election live results • Texas primaries • Electoral map • Senate, House & governor races
+          Texas election results today • Senate primary results • Live vote counts
         </div>
         <div
           style={{
-            marginTop: 48,
-            fontSize: 22,
+            marginTop: 40,
+            fontSize: 20,
             color: "#64748b",
           }}
         >
-          Election results · Live election results · Texas primaries · Electoral map · Vote results · Primary results
+          election live · texas election result · primary results
         </div>
       </div>
     ),
