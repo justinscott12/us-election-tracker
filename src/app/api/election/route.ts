@@ -9,7 +9,9 @@ export async function GET() {
   try {
     const data = await getData();
     data.showLiveResults = LIVE_RESULTS_ENABLED;
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: { "Cache-Control": "no-store, max-age=0" },
+    });
   } catch (e) {
     console.error(e);
     return NextResponse.json(

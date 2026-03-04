@@ -310,8 +310,8 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                     Winner: {race.results.find((r) => r.winner)!.name}
                   </p>
                 )}
-                {race.description && (
-                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 line-clamp-2">{race.description}</p>
+                {race.significance && (
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 line-clamp-2">{race.significance}</p>
                 )}
               </button>
             ))}
@@ -479,17 +479,10 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                 ) : (
                   <p className="text-xs text-slate-500 dark:text-slate-400 py-1">No results yet.</p>
                 )}
-                {(race.description || race.significance) && (
+                {race.significance && (
                   <div className={`mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-600 ${stateRaces.length > 1 ? "sm:mt-auto" : ""}`}>
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">Why it matters</p>
-                    <div className="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5">
-                      {race.description && (
-                        <p className={expandedWhyItMatters.has(race.id) ? "" : "line-clamp-2"}>{race.description}</p>
-                      )}
-                      {race.significance && (
-                        <p className={expandedWhyItMatters.has(race.id) ? "" : "line-clamp-2"}>{race.significance}</p>
-                      )}
-                    </div>
+                    <p className={`text-[11px] text-slate-600 dark:text-slate-300 ${expandedWhyItMatters.has(race.id) ? "" : "line-clamp-2"}`}>{race.significance}</p>
                     <button
                       type="button"
                       onClick={() =>

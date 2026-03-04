@@ -39,13 +39,34 @@ async function writeToBlob(data: ElectionData): Promise<void> {
   }
 }
 
+/** Overlay static copy from seed (e.g. significance) so seed-data.ts updates show even when using persisted data. Drops races not in seed. */
+function overlaySeedCopy(data: ElectionData): ElectionData {
+  const seedRaces = SEED_DATA.notableRaces;
+  const seedIds = new Set(seedRaces.map((r) => r.id));
+  const byId = new Map(seedRaces.map((r) => [r.id, r]));
+  return {
+    ...data,
+    notableRaces: data.notableRaces
+      .filter((race) => seedIds.has(race.id))
+      .map((race) => {
+        const seed = byId.get(race.id)!;
+        return {
+          ...race,
+          ...(seed.title !== undefined && { title: seed.title }),
+          ...(seed.significance !== undefined && { significance: seed.significance }),
+        };
+      }),
+  };
+}
+
 export async function getData(): Promise<ElectionData> {
   const blobData = await readFromBlob();
-  if (blobData) return blobData;
+  if (blobData) return overlaySeedCopy(blobData);
 
   try {
     const raw = await readFile(DATA_FILE, "utf-8");
-    return JSON.parse(raw) as ElectionData;
+    const data = JSON.parse(raw) as ElectionData;
+    return overlaySeedCopy(data);
   } catch {
     return SEED_DATA;
   }

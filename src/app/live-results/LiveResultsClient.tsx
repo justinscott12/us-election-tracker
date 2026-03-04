@@ -13,6 +13,16 @@ const LIVE_RESULTS_RACE_IDS = [
 // Texas U.S. Senate primaries — polls close March 3rd, 2026 at 7:00 PM CST (UTC-6).
 const POLL_CLOSES_AT_UTC_MS = Date.UTC(2026, 2, 4, 1, 0, 0);
 
+/** Parse test overrides from URL: ?simulatePollsClosed=1 or ?pollClosesInSeconds=30 */
+function getPollCloseOverride(): { simulateClosed: boolean; closesInSeconds: number | null } {
+  if (typeof window === "undefined" || !window.location?.search) return { simulateClosed: false, closesInSeconds: null };
+  const params = new URLSearchParams(window.location.search);
+  const simulateClosed = params.get("simulatePollsClosed") === "1" || params.get("pollsClosed") === "1";
+  const sec = params.get("pollClosesInSeconds");
+  const closesInSeconds = sec != null && /^\d+$/.test(sec) ? Math.max(0, parseInt(sec, 10)) : null;
+  return { simulateClosed, closesInSeconds };
+}
+
 function filterLiveRaces(races: NotableRace[]): NotableRace[] {
   const idSet = new Set(LIVE_RESULTS_RACE_IDS);
   return races.filter((r) => idSet.has(r.id)).sort((a, b) => a.date.localeCompare(b.date));
@@ -57,7 +67,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
   // Fetch when we have no data (e.g. no initialData from server)
   useEffect(() => {
     if (data) return;
-    fetch("/api/election")
+    fetch("/api/election", { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error("Failed to load");
         return r.json();
@@ -70,7 +80,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
   // up-to-date data as the Notable Races page (e.g. after a PATCH to /api/election)
   useEffect(() => {
     if (!initialData) return;
-    fetch("/api/election")
+    fetch("/api/election", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: ElectionData | null) => { if (d) setData(d); })
       .catch(() => {});
@@ -79,7 +89,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
   // Refetch when tab/window gains focus so PATCH updates appear as soon as user returns
   useEffect(() => {
     const refetch = () => {
-      fetch("/api/election")
+      fetch("/api/election", { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
         .then((d: ElectionData | null) => {
           if (d) setData((prev) => (prev ? d : prev));
@@ -100,8 +110,12 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
   }, []);
 
   useEffect(() => {
+    const { simulateClosed, closesInSeconds } = getPollCloseOverride();
+    const effectiveCloseMs =
+      simulateClosed ? 0 : closesInSeconds != null ? Date.now() + closesInSeconds * 1000 : POLL_CLOSES_AT_UTC_MS;
+
     const update = () => {
-      setTimeRemainingMs((prev) => Math.max(0, POLL_CLOSES_AT_UTC_MS - Date.now()));
+      setTimeRemainingMs((prev) => Math.max(0, effectiveCloseMs === 0 ? 0 : effectiveCloseMs - Date.now()));
     };
     update();
     const id = setInterval(update, 1_000);
@@ -112,7 +126,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
   useEffect(() => {
     if (!data) return;
     const interval = setInterval(() => {
-      fetch("/api/election")
+      fetch("/api/election", { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
         .then((d: ElectionData | null) => { if (d) setData(d); })
         .catch(() => {});
@@ -162,7 +176,7 @@ export function LiveResultsClient({ initialData }: { initialData: ElectionData |
           </p>
         ) : (
           <p className="mt-1 text-slate-700 dark:text-slate-200">
-            Polls have closed in Texas. Live results will continue to update as new counts are reported.
+            Polls have closed in Texas. Live results are coming through now.
           </p>
         )}
         {latestUpdate && (

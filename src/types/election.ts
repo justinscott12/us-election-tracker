@@ -98,8 +98,7 @@ export interface NotableRace {
   state?: string;
   /** Two-letter state code (e.g. SC) for map highlight; derived from state if omitted */
   stateCode?: string;
-  description?: string;
-  /** Why this race is significant / what to watch (shown when race is opened) */
+  /** Why this race matters / what to watch (shown when race is opened) */
   significance?: string;
   /** Call status: too early to call, too close, called, or final */
   status?: RaceStatus;

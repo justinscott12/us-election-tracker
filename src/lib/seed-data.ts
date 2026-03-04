@@ -35,23 +35,6 @@ export const SEED_DATA: ElectionData = {
   },
   notableRaces: [
     {
-      id: "sc-2026-primary",
-      title: "South Carolina presidential Primary",
-      date: "2026-02-28",
-      type: "primary",
-      office: "presidential",
-      state: "South Carolina",
-      stateCode: "SC",
-      description: "Early presidential primary.",
-      significance: "First-in-the-South primary; a key early test of GOP and Democratic strength heading into Super Tuesday.",
-      status: "called",
-      votesCountedPct: 94,
-      results: [
-        { name: "Donald Trump", pct: 62, winner: true },
-        { name: "Nikki Haley", pct: 38 },
-      ],
-    },
-    {
       id: "tx-senate-2026-r",
       title: "Texas U.S. Senate Republican Primary",
       date: "2026-03-03",
@@ -59,8 +42,7 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Texas",
       stateCode: "TX",
-      description: "Incumbent Senator John Cornyn (establishment conservative) trails Texas Attorney General Ken Paxton (populist) in polls; U.S. Representative Wesley Hunt could push the race to a May 26 runoff if no candidate wins an outright majority.",
-      significance: 'Texas has been a Republican stronghold for generations, but a messy primary could put the Senate seat at risk. Paxton is the frontrunner despite personal and professional scandals, with a loyal base from his attacks on immigration groups and "illegal voting"—and analysts say a Paxton primary win could make the state more open to a Democratic upset in November.',
+      significance: "This race is a high-stakes referendum on the direction of the Texas GOP, pitting four-term incumbent John Cornyn against Attorney General Ken Paxton and U.S. Rep. Wesley Hunt. Cornyn represents the state's traditional conservative establishment, while Paxton has leveraged his \"MAGA\" credentials and a defiant stance against federal overreach to mobilize the party's grassroots. Early data suggests a May 26 runoff is almost certain, as neither Cornyn nor Paxton appears likely to clear the 50% threshold tonight. The result will determine whether Texas Republicans prefer a battle-tested legislator with massive fundraising power or a firebrand populist who promises a more confrontational approach in Washington.",
       status: "too-early",
       results: [
         { name: "John Cornyn", party: "R" },
@@ -76,8 +58,7 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Texas",
       stateCode: "TX",
-      description: "U.S. Representative Jasmine Crockett, a partisan warrior with an in-your-face style, faces state Representative James Talarico, a Presbyterian seminarian aiming to appeal to more moderate voters.",
-      significance: "Marquee Democratic matchup: Crockett could appeal more to primary voters but would have a harder time winning a general election; Talarico is betting on broader appeal. The winner faces the GOP primary winner in a state that could become more competitive if Republicans nominate Paxton.",
+      significance: "Marquee Democratic matchup: Crockett could appeal more to primary voters but would have a harder time winning a general election; Talarico is betting on broader appeal. The winner faces the GOP primary winner in a state that could become more competitive if Republicans nominate Paxton. The race also serves as a test of whether AIPAC-backed candidates are hurt by that sponsorship with Crockett being backed by AIPAC.",
       status: "too-early",
       results: [
         { name: "Jasmine Crockett", party: "D" },
@@ -92,8 +73,7 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Maine",
       stateCode: "ME",
-      description: "Nominee to challenge long-time incumbent United States Senator Susan Collins. Governor Janet Mills (Establishment) vs Graham Platner (Populist/Veteran). Platner has out-raised Mills with nearly $8 million in small-dollar donations, signaling a grassroots shift in a state that usually favors moderate Democrats.",
-      significance: "Major ideological experiment: establishment vs. populist in a state that typically rewards moderates. Platner’s small-dollar surge could signal a broader shift in Democratic base energy. Maine is the only state with a Republican senator that Harris won in 2024; Collins is the only major Republican in a state that has otherwise shifted blue.",
+      significance: "Nominee to challenge long-time incumbent United States Senator Susan Collins. Governor Janet Mills (Establishment) vs Graham Platner (Populist/Veteran). Platner has out-raised Mills with nearly $8 million in small-dollar donations, signaling a grassroots shift in a state that usually favors moderate Democrats.",
       status: "too-early",
       results: [
         { name: "Janet Mills", party: "D" },
@@ -108,8 +88,7 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Michigan",
       stateCode: "MI",
-      description: "Open seat (United States Senator Gary Peters retiring). Three-way contest: United States Representative Haley Stevens (suburban moderate) vs State Senator Mallory McMorrow vs physician Abdul El-Sayed.",
-      significance: "Open-seat “civil war” between suburban moderate appeal and progressive fire. Winner will define the party’s face in a critical swing state.",
+      significance: "Open seat (United States Senator Gary Peters retiring). Three-way contest: United States Representative Haley Stevens (suburban moderate) vs State Senator Mallory McMorrow vs physician Abdul El-Sayed.",
       status: "too-early",
       results: [
         { name: "Haley Stevens", party: "D" },
@@ -125,8 +104,7 @@ export const SEED_DATA: ElectionData = {
       office: "congress",
       state: "Alaska",
       stateCode: "AK",
-      description: "Incumbent Dan Sullivan (R) vs. former U.S. Representative Mary Peltola (D) vs. other major candidates. Peltola, the first Alaska Native in Congress, entered the race in January 2026. She is the only Democrat to win a statewide election in Alaska since 2008. Senator Lisa Murkowski (R), who previously endorsed Peltola for the House, has endorsed Sullivan in this race.",
-      significance: "🏔️ The U.S. Senate \"Main Event\"—upgraded by national pundits from Safe Republican to Lean Republican after Peltola's entry. Early 2026 polls show a statistical dead heat (e.g. Peltola 49%, Sullivan 47%). Murkowski's endorsement of Sullivan is a major boost for the incumbent's GOP credentials.",
+      significance: "Incumbent Dan Sullivan (R) vs. former U.S. Representative Mary Peltola (D) vs. other major candidates. Peltola, the first Alaska Native in Congress, entered the race in January 2026. She is the only Democrat to win a statewide election in Alaska since 2008. Senator Lisa Murkowski (R), who previously endorsed Peltola for the House, has endorsed Sullivan in this race.",
       status: "too-early",
       results: [
         { name: "Dan Sullivan", party: "R" },
@@ -142,8 +120,7 @@ export const SEED_DATA: ElectionData = {
       office: "governor",
       state: "Florida",
       stateCode: "FL",
-      description: "Governor Ron DeSantis is term-limited, so the race is a battle to see who inherits his \"Florida Blueprint.\" United States Representative Byron Donalds is the frontrunner with President Trump's endorsement, leading early polls at 37%–45% of the GOP vote. Challengers include Jay Collins (Lieutenant Governor) and Paul Renner (former Speaker of the Florida House). Matt Gaetz declined a run, which further solidified Donalds' lead.",
-      significance: "Who takes the mantle of Florida Republican leadership after DeSantis will shape one of the nation's largest swing states and the \"Florida Blueprint\" model.",
+      significance: "Governor Ron DeSantis is term-limited, so the race is a battle to see who inherits his \"Florida Blueprint.\" United States Representative Byron Donalds is the frontrunner with President Trump's endorsement, leading early polls at 37%–45% of the GOP vote. Challengers include Jay Collins (Lieutenant Governor) and Paul Renner (former Speaker of the Florida House). Matt Gaetz declined a run, which further solidified Donalds' lead.",
       status: "too-early",
       results: [
         { name: "Byron Donalds", party: "R" },
@@ -159,8 +136,7 @@ export const SEED_DATA: ElectionData = {
       office: "governor",
       state: "California",
       stateCode: "CA",
-      description: "Governor Gavin Newsom is term-limited and will be leaving office. California uses a nonpartisan \"top-two\" primary: all candidates on one ballot; top two advance. Over a dozen major names. Republican Steve Hilton (former Fox News host) leads polls at 17%. Democrats are split: United States Representative Eric Swalwell (14%), United States Representative Katie Porter (10%), and Tom Steyer (9%).",
-      significance: "Because the Democratic vote is so fragmented, there is a real chance two Republicans or one Republican and one Democrat advance—a massive shakeup in this deep-blue state.",
+      significance: "Governor Gavin Newsom is term-limited and will be leaving office. California uses a nonpartisan \"top-two\" primary: all candidates on one ballot; top two advance. Over a dozen major names. Republican Steve Hilton (former Fox News host) leads polls at 17%. Democrats are split: United States Representative Eric Swalwell (14%), United States Representative Katie Porter (10%), and Tom Steyer (9%).",
       status: "too-early",
       results: [
         { name: "Steve Hilton", party: "R" },
@@ -177,8 +153,7 @@ export const SEED_DATA: ElectionData = {
       office: "governor",
       state: "Georgia",
       stateCode: "GA",
-      description: "Governor Brian Kemp is term-limited, leaving a vacuum in one of the nation's most important swing states. Lieutenant Governor Burt Jones has strong MAGA ties; Secretary of State Brad Raffensperger is known for high-profile disagreements with the Trump administration.",
-      significance: "This primary will determine whether the Georgia GOP doubles down on the Trump wing or sticks to more traditional \"Kemp-style\" conservatism.",
+      significance: "Governor Brian Kemp is term-limited, leaving a vacuum in one of the nation's most important swing states. Lieutenant Governor Burt Jones has strong MAGA ties; Secretary of State Brad Raffensperger is known for high-profile disagreements with the Trump administration.",
       status: "too-early",
       results: [
         { name: "Burt Jones", party: "R" },
@@ -193,8 +168,7 @@ export const SEED_DATA: ElectionData = {
       office: "governor",
       state: "Ohio",
       stateCode: "OH",
-      description: "Governor Mike DeWine is finishing his final term. Vivek Ramaswamy is the heavy favorite with endorsements from both President Trump and the Ohio Republican Party. He faces Heather Hill and Casey Putsch; with Trump's backing, Ramaswamy is expected to cruise through, potentially setting up a general election against Democrat Amy Acton (former state Health Director).",
-      significance: "Ramaswamy's dominance here would reinforce the power of Trump's endorsement in a key battleground state and set the stage for the general.",
+      significance: "Governor Mike DeWine is finishing his final term. Vivek Ramaswamy is the heavy favorite with endorsements from both President Trump and the Ohio Republican Party. He faces Heather Hill and Casey Putsch; with Trump's backing, Ramaswamy is expected to cruise through, potentially setting up a general election against Democrat Amy Acton (former state Health Director).",
       status: "too-early",
       results: [
         { name: "Vivek Ramaswamy", party: "R" },

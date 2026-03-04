@@ -1,6 +1,8 @@
 import { getData } from "@/lib/data";
 import { LiveResultsClient } from "./LiveResultsClient";
 
+export const dynamic = "force-dynamic";
+
 /** Race IDs shown on Live Results. Must match LiveResultsClient. */
 const LIVE_RESULTS_RACE_IDS = ["tx-senate-2026-r", "tx-senate-2026-d"];
 
