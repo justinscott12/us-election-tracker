@@ -9,6 +9,7 @@ import { UsMap } from "./UsMap";
 const STATUS_LABELS: Record<RaceStatus, string> = {
   "too-early": "Too early to call",
   "too-close": "Too close to call",
+  runoff: "Advancing To Runoff",
   called: "Called",
   final: "Final",
 };

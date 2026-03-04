@@ -85,10 +85,10 @@ export function AppHeader() {
           <div className="flex items-center min-w-0 shrink lg:flex-1 lg:justify-end">
             <Link
               href="/live-results"
-              className={`lg:hidden flex items-center gap-2 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
+              className={`lg:hidden flex items-center gap-2.5 min-w-0 py-2 -my-2 ${pathname === "/live-results" ? activeClass : linkClass}`}
             >
               <span
-                className="live-dot size-3 shrink-0 rounded-full bg-red-500 ring-2 ring-red-400/60 dark:ring-red-400/70 inline-block flex-none"
+                className="live-dot size-3 shrink-0 rounded-full bg-red-500 ring-2 ring-red-400/60 dark:ring-red-400/70 inline-block flex-none mr-0.5"
                 aria-hidden
               />
               <span className="whitespace-nowrap truncate text-xs font-medium">Live Election Results</span>
@@ -98,10 +98,10 @@ export function AppHeader() {
           <nav className="flex items-center justify-center gap-2 lg:gap-5 text-xs lg:text-sm font-medium min-w-0 shrink">
             <Link
               href="/live-results"
-              className={`flex items-center gap-2 py-2 -my-2 hidden lg:inline min-w-0 ${pathname === "/live-results" ? activeClass : linkClass}`}
+              className={`flex items-center gap-2.5 py-2 -my-2 hidden lg:inline min-w-0 ${pathname === "/live-results" ? activeClass : linkClass}`}
             >
               <span
-                className="live-dot size-3 shrink-0 rounded-full bg-red-500 ring-2 ring-red-400/60 dark:ring-red-400/70 inline-block flex-none"
+                className="live-dot size-3 shrink-0 rounded-full bg-red-500 ring-2 ring-red-400/60 dark:ring-red-400/70 inline-block flex-none mr-0.5"
                 aria-hidden
               />
               <span className="whitespace-nowrap truncate">Live Election Results</span>

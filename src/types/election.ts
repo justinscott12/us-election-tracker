@@ -77,7 +77,7 @@ export interface StateOfNation {
 }
 
 /** Race call status */
-export type RaceStatus = "too-early" | "too-close" | "called" | "final";
+export type RaceStatus = "too-early" | "too-close" | "runoff" | "called" | "final";
 
 export interface NotableRaceResult {
   name: string;

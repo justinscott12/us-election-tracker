@@ -8,16 +8,18 @@ import { UsMap } from "./UsMap";
 const STATUS_LABELS: Record<RaceStatus, string> = {
   "too-early": "Too early to call",
   "too-close": "Too close to call",
+  runoff: "Advancing To Runoff",
   called: "Called",
   final: "Final",
 };
 
-/** Tailwind classes for status pill/badge (bg and text, light + dark) */
+/** Tailwind classes for status pill/badge (bg, text, border; light + dark) */
 const STATUS_STYLES: Record<RaceStatus, string> = {
-  "too-early": "bg-slate-200 text-slate-700 dark:bg-slate-600 dark:text-slate-200",
-  "too-close": "bg-amber-200 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200",
-  called: "bg-blue-200 text-blue-900 dark:bg-blue-900/50 dark:text-blue-200",
-  final: "bg-green-200 text-green-900 dark:bg-green-900/50 dark:text-green-200",
+  "too-early": "bg-slate-300 text-slate-800 font-semibold border border-slate-400/60 dark:bg-slate-600 dark:text-slate-100 dark:border-slate-500",
+  "too-close": "bg-amber-300 text-amber-900 font-semibold border border-amber-500/60 dark:bg-amber-800/70 dark:text-amber-100 dark:border-amber-600",
+  runoff: "bg-violet-300 text-violet-900 font-semibold border border-violet-500/60 dark:bg-violet-800/70 dark:text-violet-100 dark:border-violet-600",
+  called: "bg-blue-300 text-blue-900 font-semibold border border-blue-500/60 dark:bg-blue-800/70 dark:text-blue-100 dark:border-blue-600",
+  final: "bg-emerald-300 text-emerald-900 font-semibold border border-emerald-500/60 dark:bg-emerald-800/70 dark:text-emerald-100 dark:border-emerald-600",
 };
 
 /** Format ISO date (YYYY-MM-DD) as "March 3rd" or "March 3rd, 2026" when year differs from current */
@@ -205,10 +207,10 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   <span className="font-medium text-slate-900 dark:text-slate-100">{race.title}</span>
                   {!showResultsOnCards && race.status && (
                     <span className={`text-xs font-medium rounded px-2 py-0.5 shrink-0 inline-flex items-center gap-1 ${STATUS_STYLES[race.status]}`}>
-                      {(race.status === "called" || race.status === "final") && (
+                      {STATUS_LABELS[race.status]}
+                      {(race.status === "called" || race.status === "final" || race.status === "runoff") && (
                         <span className="text-green-600 dark:text-green-400" aria-hidden>✓</span>
                       )}
-                      {STATUS_LABELS[race.status]}
                     </span>
                   )}
                 </div>
@@ -216,24 +218,14 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                   <>
                     <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
                       {formatRaceDate(race.date)}
-                      {race.state && (
-                        <>
-                          {" "}
-                          <span className="text-xs rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 font-normal text-slate-600 dark:text-slate-300">
-                            {race.state}
-                          </span>
-                        </>
-                      )}
-                      {" "}
-                      <span className="text-xs uppercase text-slate-400 dark:text-slate-500 font-normal">{race.type}</span>
                     </p>
                     {race.status && (
                       <p className="mt-1">
                         <span className={`text-xs font-medium rounded px-2 py-0.5 inline-flex items-center gap-1 ${STATUS_STYLES[race.status]}`}>
-                          {(race.status === "called" || race.status === "final") && (
+                          {STATUS_LABELS[race.status]}
+                          {(race.status === "called" || race.status === "final" || race.status === "runoff") && (
                             <span className="text-green-600 dark:text-green-400" aria-hidden>✓</span>
                           )}
-                          {STATUS_LABELS[race.status]}
                         </span>
                       </p>
                     )}
@@ -289,12 +281,6 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                     <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
                       {formatRaceDate(race.date)}
                     </span>
-                    {race.state && (
-                      <span className="text-xs rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-slate-600 dark:text-slate-300">
-                        {race.state}
-                      </span>
-                    )}
-                    <span className="text-xs uppercase text-slate-400 dark:text-slate-500">{race.type}</span>
                     {race.votesCountedPct != null && (
                       <span className="text-xs text-slate-500 dark:text-slate-400">{race.votesCountedPct}% est. votes in</span>
                     )}
@@ -398,8 +384,8 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                 key={race.id}
                 className={stateRaces.length > 1 ? "min-w-0 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 sm:p-2 flex flex-col" : ""}
               >
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 sm:mb-1.5 font-medium">{race.title}</p>
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 sm:mb-1.5 tabular-nums">
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mb-0.5 sm:mb-1">{race.title}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 sm:mb-1.5 tabular-nums">
                   {formatRaceDate(race.date)}
                 </p>
                 {race.lastUpdated && (
@@ -410,10 +396,10 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                 {race.status && (
                   <p className="mb-1 sm:mb-1.5">
                     <span className={`text-xs font-medium rounded px-2 py-1 inline-flex items-center gap-1.5 ${STATUS_STYLES[race.status]}`}>
-                      {(race.status === "called" || race.status === "final") && (
+                      {STATUS_LABELS[race.status]}
+                      {(race.status === "called" || race.status === "final" || race.status === "runoff") && (
                         <span className="text-green-600 dark:text-green-400" aria-hidden>✓</span>
                       )}
-                      {STATUS_LABELS[race.status]}
                     </span>
                   </p>
                 )}
@@ -452,9 +438,9 @@ export function NotableRaces({ races, stateFills = {}, congress, title = "Upcomi
                           <tr key={r.name} className="border-b border-slate-100 dark:border-slate-700/50">
                             <td className="py-1 sm:py-1.5 pr-2">
                               <span className="text-slate-700 dark:text-slate-300">{r.name}</span>
-                              {(race.status === "called" || race.status === "final") && idx === 0 && (
-                                <span className="text-green-600 dark:text-green-400 ml-1" aria-hidden title="Winner">✓</span>
-                              )}
+                              {((race.status === "called" || race.status === "final") && idx === 0) || (race.status === "runoff" && r.winner) ? (
+                                <span className="text-green-600 dark:text-green-400 ml-1" aria-hidden title={race.status === "runoff" ? "Advances to runoff" : "Winner"}>✓</span>
+                              ) : null}
                             </td>
                             {showParty && (
                               <td className="py-1 sm:py-1.5 pl-2 pr-2 text-right text-slate-600 dark:text-slate-400">{r.party ?? "—"}</td>
